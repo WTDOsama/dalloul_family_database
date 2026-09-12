@@ -5,7 +5,7 @@
   "description": "قاعدة بيانات أيتام عائلة دلول — نظام إدارة كامل عبر الإنترنت (Supabase + Vercel)",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "vite",
