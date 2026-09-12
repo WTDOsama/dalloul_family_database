@@ -4,2600 +4,724 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قاعدة بيانات أيتام عائلة دلول</title>
-    
-    <!-- External Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #64748b;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --info-color: #06b6d4;
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Login Page Styles */
-        .login-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
-            padding: 40px;
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .login-logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .login-logo img {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-        }
-
-        .login-logo h1 {
-            color: var(--text-primary);
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .login-logo p {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .password-wrapper {
-            position: relative;
-        }
-
-        .password-toggle {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 4px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            width: 100%;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-warning {
-            background-color: var(--warning-color);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 13px;
-        }
-
-        .btn-lg {
-            padding: 16px 32px;
-            font-size: 17px;
-        }
-
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .alert-success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        /* Main App Layout */
-        .app-container {
-            display: none;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: white;
-            box-shadow: var(--shadow);
-            overflow-y: auto;
-            z-index: 1000;
-            transition: transform 0.3s;
-        }
-
-        .sidebar-header {
-            padding: 24px 20px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .sidebar-logo {
-            width: 100px;
-            height: auto;
-            margin-bottom: 12px;
-        }
-
-        .sidebar-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .sidebar-subtitle {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .nav-menu {
-            padding: 16px 0;
-            list-style: none;
-        }
-
-        .nav-item {
-            margin: 4px 0;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s;
-            cursor: pointer;
-            border-right: 3px solid transparent;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background-color: var(--bg-color);
-            color: var(--primary-color);
-            border-right-color: var(--primary-color);
-        }
-
-        .nav-link i {
-            width: 24px;
-            margin-left: 12px;
-            font-size: 18px;
-        }
-
-        .main-content {
-            margin-right: 280px;
-            padding: 24px;
-            min-height: 100vh;
-        }
-
-        .top-bar {
-            background: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .user-info {
-            text-align: left;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .user-role {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .content-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        /* Dashboard Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .stat-icon.blue {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
-        .stat-icon.green {
-            background: #d1fae5;
-            color: #10b981;
-        }
-
-        .stat-icon.yellow {
-            background: #fef3c7;
-            color: #f59e0b;
-        }
-
-        .stat-icon.red {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        .stat-icon.purple {
-            background: #e9d5ff;
-            color: #9333ea;
-        }
-
-        .stat-content {
-            flex: 1;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        /* Tables */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 12px 16px;
-            text-align: right;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .data-table th {
-            background-color: var(--bg-color);
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .data-table tr:hover {
-            background-color: var(--bg-color);
-        }
-
-        .data-table td {
-            font-size: 14px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-primary {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .badge-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-warning {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-danger {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-info {
-            background: #cffafe;
-            color: #0e7490;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        /* Multi-step Form */
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            position: relative;
-        }
-
-        .step-indicator::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            right: 0;
-            left: 0;
-            height: 2px;
-            background: var(--border-color);
-            z-index: 0;
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-            flex: 1;
-        }
-
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            margin-bottom: 8px;
-            transition: all 0.3s;
-        }
-
-        .step.active .step-number {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-
-        .step.completed .step-number {
-            background: var(--success-color);
-            border-color: var(--success-color);
-            color: white;
-        }
-
-        .step-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .step.active .step-label {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .form-step {
-            display: none;
-        }
-
-        .form-step.active {
-            display: block;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: var(--bg-color);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .checkbox-item label {
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            max-width: 800px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 4px;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* QR Code */
-        .qr-container {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .qr-code {
-            display: inline-block;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin: 20px 0;
-        }
-
-        .qr-info {
-            margin-top: 20px;
-        }
-
-        .qr-info h3 {
-            margin-bottom: 8px;
-        }
-
-        .qr-info p {
-            color: var(--text-secondary);
-        }
-
-        /* Search and Filters */
-        .search-filters {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            margin-bottom: 24px;
-        }
-
-        .search-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .search-row:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Profile Page */
-        .profile-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 40px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .profile-info h2 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .profile-meta {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-            opacity: 0.9;
-        }
-
-        .profile-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .info-item {
-            padding: 12px;
-            background: var(--bg-color);
-            border-radius: 8px;
-        }
-
-        .info-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .info-value {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Print Styles */
-        @media print {
-            .sidebar,
-            .top-bar,
-            .no-print {
-                display: none !important;
-            }
-
-            .main-content {
-                margin-right: 0;
-                padding: 0;
-            }
-
-            .content-card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(100%);
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-right: 0;
-                padding: 16px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .table-responsive {
-                font-size: 12px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        /* يجب أن يأتي بعد القاعدة الأساسية حتى يغلبها على الشاشات الضيقة */
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: block;
-            }
-        }
-
-        /* Loading State */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-        }
-
-        .overlay.show {
-            display: flex;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border-color);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 20px;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        /* Charts Container */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 24px;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-
-        /* Utility Classes */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-left { text-align: left; }
-        .mb-0 { margin-bottom: 0; }
-        .mb-4 { margin-bottom: 16px; }
-        .mt-4 { margin-top: 16px; }
-        .hidden { display: none !important; }
-        
-        /* Radio Group */
-        .radio-group {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .radio-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--bg-color);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .radio-item input[type="radio"] {
-            cursor: pointer;
-        }
-
-        .radio-item label {
-            cursor: pointer;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 24px;
-            overflow-x: auto;
-        }
-
-        .tab {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-secondary);
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            white-space: nowrap;
-        }
-
-        .tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* File Upload */
-        .file-upload {
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            padding: 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .file-upload:hover {
-            border-color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.05);
-        }
-
-        .file-upload input {
-            display: none;
-        }
-
-        /* Warning Box */
-        .warning-box {
-            background: #fef3c7;
-            border: 1px solid #fbbf24;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .warning-box strong {
-            color: #92400e;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .warning-box p {
-            color: #78350f;
-            font-size: 14px;
-        }
-
-        /* ===== إضافات النسخة الإلكترونية (قاعدة بيانات أونلاين) ===== */
-        .pagination {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .pagination button {
-            min-width: 38px;
-        }
-
-        .pagination .page-info {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 0 10px;
-        }
-
-        .badge-secondary {
-            background: #e2e8f0;
-            color: #334155;
-        }
-
-        .muted {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-
-        .inline-note {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .link-btn {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 14px;
-            padding: 4px 8px;
-            text-decoration: underline;
-        }
-
-        .copy-box {
-            background: var(--bg-color);
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            word-break: break-all;
-            font-size: 12px;
-            direction: ltr;
-            text-align: left;
-            margin-top: 8px;
-        }
-
-        @media print {
-            body.print-mode .app-container,
-            body.print-mode .login-page {
-                display: none !important;
-            }
-
-            body.print-mode .modal {
-                display: block !important;
-                position: static;
-                background: none;
-                padding: 0;
-            }
-
-            body.print-mode .modal-content {
-                max-width: 100%;
-                box-shadow: none;
-            }
-
-            body.print-mode .modal-header .modal-close,
-            body.print-mode .modal-footer,
-            body.print-mode .no-print {
-                display: none !important;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body>
-    <!-- Login Page -->
-    <div id="loginPage" class="login-page">
-        <div class="login-container">
-            <div class="login-logo">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzQyODVGNDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNkI3MkZENztzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwYXRoIGQ9Ik0gMTAwIDIwIEwgMTgwIDYwIEwgMTgwIDE2MCBMIDEwMCAxODAgTCAyMCAxNjAgTCAyMCA2MCBaIiBmaWxsPSJ1cmwoI2dyYWRpZW50MSkiIHN0cm9rZT0iIzEwQjdGNiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHRleHQgeD0iMTAwIiB5PSIxMTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtbDqMOLPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7YqNin2Kkg2KfYsdio2YcgLS0g2KfYsdin2Kk8L3RleHQ+Cjwvc3ZnPg==" alt="Daloul Logo" style="width: 150px; height: auto;">
-                <h1>قاعدة بيانات أيتام عائلة دلول</h1>
-                <p>نظام إدارة بيانات الأيتام والأسر</p>
+<body class="bg-gray-100">
+
+<script>
+// ==================== إعدادات Supabase ====================
+const SUPABASE_URL = 'https://tqdqoszgsrrbuhdtzlet.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD...'; // ⚠️ ضع مفتاحك هنا
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ==================== المتغيرات العامة ====================
+let currentUser = null;
+let allOrphans = [];
+let allFamilies = [];
+let allAssistance = [];
+let allFollowups = [];
+
+// ==================== التهيئة ====================
+document.addEventListener('DOMContentLoaded', async () => {
+    await checkAuth();
+    setupEventListeners();
+});
+
+async function checkAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        currentUser = session.user;
+        showMainApp();
+        await loadAllData();
+    } else {
+        showLoginScreen();
+    }
+}
+
+function showLoginScreen() {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('mainApp').classList.add('hidden');
+}
+
+function showMainApp() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    updateUserInfo();
+}
+
+function updateUserInfo() {
+    const userName = currentUser.email.split('@')[0];
+    document.getElementById('userNameDisplay').textContent = userName;
+}
+
+// ==================== تسجيل الدخول ====================
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        errorDiv.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+        errorDiv.classList.remove('hidden');
+    } else {
+        currentUser = data.user;
+        showMainApp();
+        await loadAllData();
+        errorDiv.classList.add('hidden');
+    }
+}
+
+// ==================== تسجيل الخروج ====================
+async function handleLogout() {
+    await supabase.auth.signOut();
+    currentUser = null;
+    showLoginScreen();
+}
+
+// ==================== تحميل البيانات ====================
+async function loadAllData() {
+    await loadFamilies();
+    await loadOrphans();
+    await loadAssistance();
+    await loadFollowups();
+    updateStats();
+}
+
+async function loadFamilies() {
+    const { data, error } = await supabase
+        .from('families')
+        .select('*')
+        .order('created_at', { ascending: false });
+    
+    if (error) {
+        showToast('خطأ في تحميل الأسر: ' + error.message, 'error');
+        return;
+    }
+    
+    allFamilies = data || [];
+    renderFamiliesTable();
+}
+
+async function loadOrphans() {
+    const { data, error } = await supabase
+        .from('orphans')
+        .select('*, families(name)')
+        .order('created_at', { ascending: false });
+    
+    if (error) {
+        showToast('خطأ في تحميل الأيتام: ' + error.message, 'error');
+        return;
+    }
+    
+    allOrphans = data || [];
+    renderOrphansTable();
+    renderRecentOrphans();
+}
+
+async function loadAssistance() {
+    const { data, error } = await supabase
+        .from('assistance')
+        .select('*')
+        .order('date', { ascending: false });
+    
+    if (error) {
+        console.error('Error loading assistance:', error);
+        allAssistance = [];
+        return;
+    }
+    
+    allAssistance = data || [];
+}
+
+async function loadFollowups() {
+    const { data, error } = await supabase
+        .from('followups')
+        .select('*')
+        .order('date', { ascending: false });
+    
+    if (error) {
+        console.error('Error loading followups:', error);
+        allFollowups = [];
+        return;
+    }
+    
+    allFollowups = data || [];
+}
+
+// ==================== عرض الجداول ====================
+function renderFamiliesTable() {
+    const tbody = document.getElementById('familiesTableBody');
+    if (!tbody) return;
+    
+    if (allFamilies.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="p-8 text-center text-gray-500">
+                    <div class="text-6xl mb-4">👨‍‍👦</div>
+                    <p>لا توجد أسر مسجلة حتى الآن</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = allFamilies.map(family => `
+        <tr class="border-b hover:bg-gray-50 transition">
+            <td class="p-3">${escapeHtml(family.name)}</td>
+            <td class="p-3">${family.members_count || '-'}</td>
+            <td class="p-3">${family.orphans_count || 0}</td>
+            <td class="p-3">${getEconomicStatusText(family.economic_status)}</td>
+            <td class="p-3">${family.is_displaced ? 'نازحة' : 'غير نازحة'}</td>
+            <td class="p-3">
+                <button onclick="editFamily('${family.id}')" class="text-blue-600 hover:text-blue-800 ml-2">تعديل</button>
+                <button onclick="deleteFamily('${family.id}')" class="text-red-600 hover:text-red-800">حذف</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderOrphansTable() {
+    const tbody = document.getElementById('orphansTableBody');
+    if (!tbody) return;
+    
+    if (allOrphans.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="p-8 text-center text-gray-500">
+                    <div class="text-6xl mb-4"></div>
+                    <p>لا توجد بيانات أيتام حتى الآن</p>
+                    <p class="text-sm mt-2">ابدأ بإضافة يتيم جديد</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = allOrphans.map(orphan => `
+        <tr class="border-b hover:bg-gray-50 transition">
+            <td class="p-3">${escapeHtml(orphan.file_number)}</td>
+            <td class="p-3">${escapeHtml(orphan.full_name)}</td>
+            <td class="p-3">${orphan.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
+            <td class="p-3">${calculateAge(orphan.birth_date)}</td>
+            <td class="p-3">${getOrphanStatusText(orphan.orphan_status)}</td>
+            <td class="p-3">${orphan.families?.name || '-'}</td>
+            <td class="p-3">${escapeHtml(orphan.district || '-')}</td>
+            <td class="p-3">${getSponsorshipStatusText(orphan.sponsorship_status)}</td>
+            <td class="p-3">
+                <button onclick="viewOrphanQR('${orphan.id}')" class="text-purple-600 hover:text-purple-800 ml-2">📱</button>
+                <button onclick="editOrphan('${orphan.id}')" class="text-blue-600 hover:text-blue-800 ml-2">تعديل</button>
+                <button onclick="deleteOrphan('${orphan.id}')" class="text-red-600 hover:text-red-800">حذف</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderRecentOrphans() {
+    const container = document.getElementById('recentOrphansList');
+    if (!container) return;
+    
+    const recent = allOrphans.slice(0, 5);
+    
+    if (recent.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center p-4">لا يوجد أيتام مسجلين حديثاً</p>';
+        return;
+    }
+    
+    container.innerHTML = recent.map(orphan => `
+        <div class="bg-white p-4 rounded-lg shadow mb-2">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="font-bold">${escapeHtml(orphan.full_name)}</h4>
+                    <p class="text-sm text-gray-600">${orphan.families?.name || '-'}</p>
+                </div>
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${calculateAge(orphan.birth_date)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== الإحصائيات ====================
+function updateStats() {
+    const totalOrphans = allOrphans.length;
+    const totalFamilies = allFamilies.length;
+    const maleOrphans = allOrphans.filter(o => o.gender === 'male').length;
+    const femaleOrphans = allOrphans.filter(o => o.gender === 'female').length;
+    
+    const statOrphans = document.getElementById('statOrphans');
+    const statFamilies = document.getElementById('statFamilies');
+    const statMale = document.getElementById('statMale');
+    const statFemale = document.getElementById('statFemale');
+    
+    if (statOrphans) statOrphans.textContent = totalOrphans;
+    if (statFamilies) statFamilies.textContent = totalFamilies;
+    if (statMale) statMale.textContent = maleOrphans;
+    if (statFemale) statFemale.textContent = femaleOrphans;
+}
+
+// ==================== إضافة/تعديل/حذف ====================
+async function addFamily(familyData) {
+    const { data, error } = await supabase.from('families').insert([familyData]).select();
+    
+    if (error) {
+        showToast('فشل الحفظ: ' + error.message, 'error');
+        return null;
+    }
+    
+    showToast('تم إضافة الأسرة بنجاح', 'success');
+    await loadFamilies();
+    updateStats();
+    return data[0];
+}
+
+async function addOrphan(orphanData) {
+    const { data, error } = await supabase.from('orphans').insert([orphanData]).select();
+    
+    if (error) {
+        showToast('فشل الحفظ: ' + error.message, 'error');
+        return null;
+    }
+    
+    showToast('تم إضافة اليتيم بنجاح', 'success');
+    await loadOrphans();
+    updateStats();
+    return data[0];
+}
+
+async function deleteFamily(id) {
+    if (!confirm('هل أنت متأكد من حذف هذه الأسرة؟')) return;
+    
+    const { error } = await supabase.from('families').delete().eq('id', id);
+    
+    if (error) {
+        showToast('فشل الحذف: ' + error.message, 'error');
+        return;
+    }
+    
+    showToast('تم الحذف بنجاح', 'success');
+    await loadFamilies();
+    updateStats();
+}
+
+async function deleteOrphan(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا اليتيم؟')) return;
+    
+    const { error } = await supabase.from('orphans').delete().eq('id', id);
+    
+    if (error) {
+        showToast('فشل الحذف: ' + error.message, 'error');
+        return;
+    }
+    
+    showToast('تم الحذف بنجاح', 'success');
+    await loadOrphans();
+    updateStats();
+}
+
+// ==================== دوال مساعدة ====================
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function calculateAge(birthDate) {
+    if (!birthDate) return '-';
+    const diff = Date.now() - new Date(birthDate).getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) + ' سنة';
+}
+
+function getEconomicStatusText(status) {
+    const map = {
+        'good': 'جيدة',
+        'medium': 'متوسطة',
+        'poor': 'ضعيفة',
+        'very_poor': 'ضعيفة جداً'
+    };
+    return map[status] || status || '-';
+}
+
+function getOrphanStatusText(status) {
+    const map = {
+        'father': 'يتيم الأب',
+        'mother': 'يتيم الأم',
+        'both': 'يتيم الأب والأم'
+    };
+    return map[status] || status || '-';
+}
+
+function getSponsorshipStatusText(status) {
+    const map = {
+        'sponsored': 'مكفول',
+        'unsponsored': 'غير مكفول',
+        'needs_sponsor': 'بحاجة إلى كفيل'
+    };
+    return map[status] || status || '-';
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 left-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 transition-all transform translate-x-0 ${
+        type === 'error' ? 'bg-red-600' : 
+        type === 'success' ? 'bg-green-600' : 'bg-blue-600'
+    }`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function setupEventListeners() {
+    // نموذج تسجيل الدخول
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // زر الخروج
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    // نماذج الإضافة
+    const addFamilyForm = document.getElementById('addFamilyForm');
+    if (addFamilyForm) {
+        addFamilyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const familyData = Object.fromEntries(formData.entries());
+            await addFamily(familyData);
+            e.target.reset();
+            document.getElementById('addFamilyModal').classList.add('hidden');
+        });
+    }
+    
+    const addOrphanForm = document.getElementById('addOrphanForm');
+    if (addOrphanForm) {
+        addOrphanForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const orphanData = Object.fromEntries(formData.entries());
+            await addOrphan(orphanData);
+            e.target.reset();
+            document.getElementById('addOrphanModal').classList.add('hidden');
+        });
+    }
+    
+    // أزرار فتح النوافذ
+    window.openFamilyModal = () => {
+        document.getElementById('addFamilyModal').classList.remove('hidden');
+    };
+    
+    window.closeFamilyModal = () => {
+        document.getElementById('addFamilyModal').classList.add('hidden');
+    };
+    
+    window.openOrphanModal = () => {
+        document.getElementById('addOrphanModal').classList.remove('hidden');
+    };
+    
+    window.closeOrphanModal = () => {
+        document.getElementById('addOrphanModal').classList.add('hidden');
+    };
+    
+    // دوال الحذف والتعديل (عالمية)
+    window.deleteFamily = deleteFamily;
+    window.deleteOrphan = deleteOrphan;
+    window.editFamily = (id) => showToast('خاصية التعديل قيد التطوير', 'info');
+    window.editOrphan = (id) => showToast('خاصية التعديل قيد التطوير', 'info');
+    window.viewOrphanQR = (id) => showToast('خاصية QR قيد التطوير', 'info');
+}
+</script>
+
+<!-- ==================== واجهة المستخدم ==================== -->
+
+<!-- شاشة تسجيل الدخول -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 to-blue-700">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-800 mb-2">قاعدة بيانات أيتام عائلة دلول</h1>
+            <p class="text-gray-600">نظام إدارة بيانات الأيتام والأسر</p>
+        </div>
+        
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">اسم المستخدم</label>
+                <input type="email" id="loginUsername" required 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
             </div>
             
-            <div id="loginAlert" class="alert alert-error"></div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                <input type="password" id="loginPassword" required 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+            </div>
             
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">البريد الإلكتروني</label>
-                    <input type="email" id="email" name="email" required autocomplete="username" dir="ltr">
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">كلمة المرور</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="password" name="password" required autocomplete="current-password">
-                        <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-lg">
-                    تسجيل الدخول
-                </button>
-            </form>
-
-            <p class="text-center mt-4 mb-0">
-                <a href="#" onclick="showForgotPassword(); return false;" style="color: var(--primary-color); font-size: 14px; text-decoration: none;">نسيت كلمة المرور؟</a>
+            <div id="loginError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
+            
+            <button type="submit" 
+                class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-bold shadow-lg">
+                تسجيل الدخول
+            </button>
+        </form>
+        
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p class="text-xs text-gray-600 text-center">
+                🔒 تنبيه مهم: هذا النظام يعمل الآن مع قاعدة بيانات سحابية آمنة.
             </p>
+        </div>
+    </div>
+</div>
 
-            <!-- لوحة إنشاء حساب المدير الأول (تظهر مرة واحدة فقط عند أول تشغيل للنظام) -->
-            <form id="setupForm" class="hidden">
-                <div id="setupAlert" class="alert alert-error"></div>
-                <div class="form-group">
-                    <label for="setupFullName">الاسم الكامل *</label>
-                    <input type="text" id="setupFullName" required>
-                </div>
-                <div class="form-group">
-                    <label for="setupEmail">البريد الإلكتروني *</label>
-                    <input type="email" id="setupEmail" required dir="ltr">
-                </div>
-                <div class="form-group">
-                    <label for="setupPassword">كلمة المرور *</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="setupPassword" required minlength="6" autocomplete="new-password">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="setupConfirmPassword">تأكيد كلمة المرور *</label>
-                    <input type="password" id="setupConfirmPassword" required minlength="6" autocomplete="new-password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg">
-                    إنشاء حساب المدير الأول
+<!-- التطبيق الرئيسي -->
+<div id="mainApp" class="hidden min-h-screen flex flex-col md:flex-row">
+    <!-- القائمة الجانبية -->
+    <aside class="w-full md:w-64 bg-slate-800 text-white p-4 shadow-xl">
+        <div class="text-center mb-6 pb-4 border-b border-slate-700">
+            <h2 class="text-2xl font-bold mb-1">عائلة دلول</h2>
+            <p class="text-sm text-gray-400">نظام إدارة الأيتام</p>
+        </div>
+        
+        <nav class="space-y-2 mb-8">
+            <a href="#" class="block p-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition">🏠 الرئيسية</a>
+            <a href="#orphansSection" class="block p-3 hover:bg-slate-700 rounded-lg transition">👶 الأيتام</a>
+            <a href="#familiesSection" class="block p-3 hover:bg-slate-700 rounded-lg transition">👨‍👩‍👧‍👦 الأسر</a>
+            <a href="#" class="block p-3 hover:bg-slate-700 rounded-lg transition"> المساعدات</a>
+            <a href="#" class="block p-3 hover:bg-slate-700 rounded-lg transition">📈 الإحصاءات</a>
+            <a href="#" class="block p-3 hover:bg-slate-700 rounded-lg transition">️ الإعدادات</a>
+        </nav>
+        
+        <div class="mt-auto pt-6 border-t border-slate-700">
+            <div class="mb-4 p-3 bg-slate-700 rounded-lg">
+                <p class="text-sm text-gray-300">المدير</p>
+                <p id="userNameDisplay" class="font-bold text-white">مدير النظام</p>
+            </div>
+            <button id="logoutBtn" 
+                class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition text-sm">
+                خروج
+            </button>
+        </div>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto bg-gray-100">
+        <!-- الإحصائيات -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-blue-600">
+                <div class="text-4xl font-bold text-blue-600 mb-2" id="statOrphans">0</div>
+                <div class="text-gray-600 text-sm font-medium">إجمالي الأيتام</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-green-600">
+                <div class="text-4xl font-bold text-green-600 mb-2" id="statFamilies">0</div>
+                <div class="text-gray-600 text-sm font-medium">إجمالي الأسر</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-indigo-600">
+                <div class="text-4xl font-bold text-indigo-600 mb-2" id="statMale">0</div>
+                <div class="text-gray-600 text-sm font-medium">أيتام ذكور</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-pink-600">
+                <div class="text-4xl font-bold text-pink-600 mb-2" id="statFemale">0</div>
+                <div class="text-gray-600 text-sm font-medium">أيتام إناث</div>
+            </div>
+        </div>
+
+        <!-- آخر الأيتام المسجلين -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">آخر الأيتام المسجلين</h3>
+                <button onclick="openOrphanModal()" 
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm">
+                    + إضافة يتيم جديد
                 </button>
-                <p class="muted text-center mt-4 mb-0">
-                    هذه الشاشة متاحة فقط عندما لا يوجد أي حساب مدير في النظام، وتُغلق تلقائياً بعد الإنشاء.
-                </p>
-            </form>
+            </div>
+            <div id="recentOrphansList" class="space-y-2">
+                <p class="text-gray-500 text-center py-8">جاري التحميل...</p>
+            </div>
+        </div>
 
-            <!-- لوحة استعادة كلمة المرور -->
-            <form id="forgotForm" class="hidden">
-                <div id="forgotAlert" class="alert alert-success"></div>
-                <div class="form-group">
-                    <label for="forgotEmail">البريد الإلكتروني</label>
-                    <input type="email" id="forgotEmail" required dir="ltr">
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg">
-                    إرسال رابط الاستعادة
+        <!-- قسم الأسر -->
+        <div id="familiesSection" class="bg-white rounded-xl shadow-lg mb-8">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-800">إدارة الأسر</h3>
+                <button onclick="openFamilyModal()" 
+                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm">
+                    + إضافة أسرة
                 </button>
-                <button type="button" class="btn btn-secondary btn-lg" onclick="showLogin()" style="width: 100%; margin-top: 10px;">
-                    رجوع لتسجيل الدخول
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-right">
+                    <thead class="bg-gray-50 text-gray-700 font-bold">
+                        <tr>
+                            <th class="p-4">اسم الأسرة</th>
+                            <th class="p-4">عدد الأفراد</th>
+                            <th class="p-4">عدد الأيتام</th>
+                            <th class="p-4">الحالة الاقتصادية</th>
+                            <th class="p-4">النزوح</th>
+                            <th class="p-4">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="familiesTableBody">
+                        <tr>
+                            <td colspan="6" class="p-8 text-center text-gray-500">جاري التحميل...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- قسم الأيتام -->
+        <div id="orphansSection" class="bg-white rounded-xl shadow-lg">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-800">قائمة الأيتام</h3>
+                <button onclick="openOrphanModal()" 
+                    class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
+                    + إضافة يتيم
                 </button>
-            </form>
-
-            <!-- لوحة حساب بانتظار التفعيل -->
-            <div id="pendingPanel" class="hidden" style="text-align: center;">
-                <div class="alert alert-warning show" style="display: block; background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">
-                    حسابك مُسجّل لكنه بانتظار تفعيله من قبل مدير النظام.
-                </div>
-                <button class="btn btn-secondary" onclick="retryPending()">إعادة المحاولة</button>
-                <button class="btn btn-primary" onclick="logout()">تسجيل الخروج</button>
             </div>
-            
-            <div class="warning-box mt-4">
-                <strong>نظام مؤمَّن:</strong>
-                <p>البيانات محفوظة في قاعدة بيانات PostgreSQL آمنة على الإنترنت (Supabase) مع تسجيل دخول وصلاحيات لكل مستخدم. لا تُخزَّل أي بيانات حساسة داخل المتصفح.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Application -->
-    <div id="appContainer" class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzQyODVGNDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNkI3MkZENztzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwYXRoIGQ9Ik0gMTAwIDIwIEwgMTgwIDYwIEwgMTgwIDE2MCBMIDEwMCAxODAgTCAyMCAxNjAgTCAyMCA2MCBaIiBmaWxsPSJ1cmwoI2dyYWRpZW50MSkiIHN0cm9rZT0iIzEwQjdGNiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHRleHQgeD0iMTAwIiB5PSIxMTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPtbDqMOLPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7YqNin2Kkg2KfYsdio2YcgLS0g2KfYsdin2Kk8L3RleHQ+Cjwvc3ZnPg==" alt="Logo" class="sidebar-logo">
-                <div class="sidebar-title">قاعدة بيانات أيتام عائلة دلول</div>
-                <div class="sidebar-subtitle">نظام إدارة بيانات الأيتام والأسر</div>
-            </div>
-            
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a class="nav-link active" onclick="navigateTo('dashboard')">
-                        <span></span>
-                        <span>الرئيسية</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="navigateTo('orphans')">
-                        <span>👶</span>
-                        <span>الأيتام</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="navigateTo('families')">
-                        <span>👨‍👩👧‍👦</span>
-                        <span>الأسر</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="navigateTo('assistance')">
-                        <span>🤝</span>
-                        <span>المساعدات</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="navigateTo('followup')">
-                        <span>📋</span>
-                        <span>المتابعة</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="navReports" style="display: none;">
-                    <a class="nav-link" onclick="navigateTo('reports')">
-                        <span></span>
-                        <span>التقارير</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="navigateTo('statistics')">
-                        <span>📈</span>
-                        <span>الإحصاءات</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="navLogs" style="display: none;">
-                    <a class="nav-link" onclick="navigateTo('logs')">
-                        <span>📜</span>
-                        <span>سجل النشاط</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="navBackup" style="display: none;">
-                    <a class="nav-link" onclick="navigateTo('backup')">
-                        <span></span>
-                        <span>النسخ الاحتياطي والبيانات</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" onclick="navigateTo('settings')">
-                        <span>⚙️</span>
-                        <span>إعدادات المدير</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <button class="mobile-menu-toggle" onclick="toggleSidebar()" aria-label="فتح القائمة">☰</button>
-                <h1 class="page-title" id="pageTitle">الرئيسية</h1>
-                <div class="user-menu">
-                    <div class="user-info">
-                        <div class="user-name" id="userName">المدير</div>
-                        <div class="user-role" id="userRole">مدير النظام</div>
-                    </div>
-                    <button class="btn btn-secondary btn-sm" onclick="logout()">
-                        خروج 
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dashboard -->
-            <div id="dashboardPage" class="page-content">
-                <div class="stats-grid" id="dashboardStats">
-                    <!-- Stats will be populated dynamically -->
-                </div>
-                
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">آخر الأيتام المسجلين</h2>
-                        <button class="btn btn-primary" onclick="navigateTo('orphans', 'add')">
-                            + إضافة يتيم جديد
-                        </button>
-                    </div>
-                    <div id="recentOrphans">
-                        <!-- Recent orphans table -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Orphans Page -->
-            <div id="orphansPage" class="page-content hidden">
-                <div class="search-filters">
-                    <div class="search-row">
-                        <div class="form-group mb-0" style="grid-column: span 2;">
-                            <input type="text" id="searchInput" placeholder="بحث بالاسم، رقم الملف، الهوية، الأسرة، ولي الأمر، الجوال، المنطقة..." onkeyup="searchOrphans()">
-                        </div>
-                        <div class="form-group mb-0">
-                            <select id="orphansPerPage" onchange="changeOrphansPerPage(this.value)">
-                                <option value="10">10 صفوف</option>
-                                <option value="20" selected>20 صف</option>
-                                <option value="50">50 صف</option>
-                                <option value="100">100 صف</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="search-row" id="advancedFilters">
-                        <div class="form-group mb-0">
-                            <select id="filterGender" onchange="filterOrphans()">
-                                <option value="">الجنس (الكل)</option>
-                                <option value="male">ذكر</option>
-                                <option value="female">أنثى</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0">
-                            <select id="filterOrphanStatus" onchange="filterOrphans()">
-                                <option value="">حالة اليتم (الكل)</option>
-                                <option value="father">يتيم الأب</option>
-                                <option value="mother">يتيم الأم</option>
-                                <option value="both">يتيم الأب والأم</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0">
-                            <select id="filterSponsorship" onchange="filterOrphans()">
-                                <option value="">حالة الكفالة (الكل)</option>
-                                <option value="sponsored">مكفول</option>
-                                <option value="unsponsored">غير مكفول</option>
-                                <option value="needs">بحاجة إلى كفيل</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0">
-                            <button class="btn btn-secondary btn-sm" onclick="clearFilters()">مسح الفلاتر</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">قائمة الأيتام</h2>
-                        <div class="action-buttons">
-                            <button class="btn btn-primary perm-edit" onclick="openOrphanForm()">
-                                + إضافة يتيم
-                            </button>
-                            <button class="btn btn-secondary" onclick="scanQR()">
-                                 مسح QR
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table" id="orphansTable">
-                            <thead>
-                                <tr>
-                                    <th>رقم الملف</th>
-                                    <th>الاسم الرباعي</th>
-                                    <th>الجنس</th>
-                                    <th>العمر</th>
-                                    <th>حالة اليتم</th>
-                                    <th>الأسرة</th>
-                                    <th>المنطقة</th>
-                                    <th>الكفالة</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orphansTableBody">
-                                <!-- Data will be populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="orphansPagination" class="pagination"></div>
-                    <div id="orphansEmptyState" class="empty-state hidden">
-                        <div class="empty-state-icon">📋</div>
-                        <h3>لا توجد بيانات أيتام حتى الآن</h3>
-                        <p>ابدأ بإضافة يتيم جديد</p>
-                        <button class="btn btn-primary mt-4" onclick="openOrphanForm()">
-                            + إضافة يتيم
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Families Page -->
-            <div id="familiesPage" class="page-content hidden">
-                <div class="search-filters">
-                    <div class="search-row">
-                        <div class="form-group mb-0" style="grid-column: span 2;">
-                            <input type="text" id="familySearchInput" placeholder="بحث باسم الأسرة، رمز الأسرة، ولي الأمر، الجوال، المنطقة..." onkeyup="searchFamilies()">
-                        </div>
-                        <div class="form-group mb-0">
-                            <select id="familiesPerPage" onchange="changeFamiliesPerPage(this.value)">
-                                <option value="10">10 صفوف</option>
-                                <option value="20" selected>20 صف</option>
-                                <option value="50">50 صف</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0">
-                            <button class="btn btn-secondary btn-sm" onclick="clearFamilyFilters()">مسح الفلاتر</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">إدارة الأسر</h2>
-                        <div class="action-buttons perm-edit">
-                            <button class="btn btn-primary" onclick="openFamilyForm()">
-                                + إضافة أسرة
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table" id="familiesTable">
-                            <thead>
-                                <tr>
-                                    <th>اسم الأسرة</th>
-                                    <th>رمز الأسرة</th>
-                                    <th>ولي الأمر</th>
-                                    <th>الجوال</th>
-                                    <th>المنطقة</th>
-                                    <th>عدد الأيتام</th>
-                                    <th>الحالة الاقتصادية</th>
-                                    <th>النزوح</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="familiesTableBody">
-                                <!-- Data will be populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="familiesPagination" class="pagination"></div>
-                    <div id="familiesEmptyState" class="empty-state hidden">
-                        <div class="empty-state-icon">👨‍‍👧‍👦</div>
-                        <h3>لا توجد أسر مسجلة حتى الآن</h3>
-                        <button class="btn btn-primary mt-4 perm-edit" onclick="openFamilyForm()">
-                            + إضافة أسرة
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assistance Page -->
-            <div id="assistancePage" class="page-content hidden">
-                <div class="search-filters">
-                    <div class="search-row">
-                        <div class="form-group mb-0" style="grid-column: span 2;">
-                            <input type="text" id="assistanceSearch" placeholder="بحث باسم اليتيم أو رقم الملف..." onkeyup="searchAssistance()">
-                        </div>
-                        <div class="form-group mb-0">
-                            <select id="assistanceTypeFilter" onchange="loadAssistance()">
-                                <option value="">نوع المساعدة (الكل)</option>
-                                <option value="material">عينية</option>
-                                <option value="food">غذائية</option>
-                                <option value="cash">مالية</option>
-                                <option value="medical">طبية</option>
-                                <option value="education">تعليمية</option>
-                                <option value="housing">سكنية</option>
-                                <option value="other">أخرى</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0">
-                            <button class="btn btn-secondary btn-sm" onclick="clearAssistanceFilters()">مسح الفلاتر</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">سجل المساعدات</h2>
-                        <div class="action-buttons perm-edit">
-                            <button class="btn btn-primary" onclick="openAssistanceForm()">+ إضافة مساعدة</button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table" id="assistanceTable">
-                            <thead>
-                                <tr>
-                                    <th>اليتيم</th>
-                                    <th>رقم الملف</th>
-                                    <th>التاريخ</th>
-                                    <th>النوع</th>
-                                    <th>المبلغ</th>
-                                    <th>ملاحظات</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="assistanceTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="assistancePagination" class="pagination"></div>
-                    <div id="assistanceEmptyState" class="empty-state hidden">
-                        <div class="empty-state-icon">🤝</div>
-                        <h3>لا توجد مساعدات مسجلة حتى الآن</h3>
-                        <button class="btn btn-primary mt-4 perm-edit" onclick="openAssistanceForm()">+ إضافة مساعدة</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Follow-up Page -->
-            <div id="followupPage" class="page-content hidden">
-                <div class="search-filters">
-                    <div class="search-row">
-                        <div class="form-group mb-0" style="grid-column: span 2;">
-                            <input type="text" id="followupSearch" placeholder="بحث باسم اليتيم أو رقم الملف..." onkeyup="searchFollowup()">
-                        </div>
-                        <div class="form-group mb-0">
-                            <select id="followupFilter" onchange="loadFollowups()">
-                                <option value="">عرض (الكل)</option>
-                                <option value="upcoming">متابعات قادمة</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0">
-                            <button class="btn btn-secondary btn-sm" onclick="clearFollowupFilters()">مسح الفلاتر</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">سجل المتابعة</h2>
-                        <div class="action-buttons perm-edit">
-                            <button class="btn btn-primary" onclick="openFollowupForm()">+ إضافة متابعة</button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table" id="followupsTable">
-                            <thead>
-                                <tr>
-                                    <th>اليتيم</th>
-                                    <th>رقم الملف</th>
-                                    <th>تاريخ المتابعة</th>
-                                    <th>الملاحظات</th>
-                                    <th>المتابعة القادمة</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="followupsTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="followupsPagination" class="pagination"></div>
-                    <div id="followupsEmptyState" class="empty-state hidden">
-                        <div class="empty-state-icon">📋</div>
-                        <h3>لا توجد متابعات مسجلة حتى الآن</h3>
-                        <button class="btn btn-primary mt-4 perm-edit" onclick="openFollowupForm()">+ إضافة متابعة</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity Logs Page (Admin) -->
-            <div id="logsPage" class="page-content hidden">
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">سجل النشاط</h2>
-                        <div class="action-buttons">
-                            <select id="logActionFilter" onchange="changeLogFilter(this.value)">
-                                <option value="">كل الإجراءات</option>
-                                <option value="login">تسجيل دخول</option>
-                                <option value="logout">تسجيل خروج</option>
-                                <option value="create">إضافة</option>
-                                <option value="update">تعديل</option>
-                                <option value="delete">حذف</option>
-                                <option value="user">إدارة المستخدمين</option>
-                                <option value="export">تصدير</option>
-                                <option value="import">استيراد</option>
-                                <option value="security">أمان</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table" id="logsTable">
-                            <thead>
-                                <tr>
-                                    <th>الوقت</th>
-                                    <th>المستخدم</th>
-                                    <th>الإجراء</th>
-                                    <th>الكيان</th>
-                                    <th>الوصف</th>
-                                </tr>
-                            </thead>
-                            <tbody id="logsTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="logsPagination" class="pagination"></div>
-                    <div id="logsEmptyState" class="empty-state hidden">
-                        <div class="empty-state-icon">📜</div>
-                        <h3>لا توجد سجلات نشاط</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Orphan Form Modal -->
-            <div id="orphanModal" class="modal">
-                <div class="modal-content" style="max-width: 1000px;">
-                    <div class="modal-header">
-                        <h3 class="modal-title" id="orphanModalTitle">إضافة يتيم جديد</h3>
-                        <button class="modal-close" onclick="closeOrphanModal()">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="orphanForm">
-                            <!-- Step Indicator -->
-                            <div class="step-indicator">
-                                <div class="step active" data-step="1">
-                                    <div class="step-number">1</div>
-                                    <div class="step-label">البيانات الأساسية</div>
-                                </div>
-                                <div class="step" data-step="2">
-                                    <div class="step-number">2</div>
-                                    <div class="step-label">السكن</div>
-                                </div>
-                                <div class="step" data-step="3">
-                                    <div class="step-number">3</div>
-                                    <div class="step-label">ولي الأمر</div>
-                                </div>
-                                <div class="step" data-step="4">
-                                    <div class="step-number">4</div>
-                                    <div class="step-label">الأسرة</div>
-                                </div>
-                                <div class="step" data-step="5">
-                                    <div class="step-number">5</div>
-                                    <div class="step-label">التعليم</div>
-                                </div>
-                                <div class="step" data-step="6">
-                                    <div class="step-number">6</div>
-                                    <div class="step-label">الصحة</div>
-                                </div>
-                                <div class="step" data-step="7">
-                                    <div class="step-number">7</div>
-                                    <div class="step-label">الاحتياجات</div>
-                                </div>
-                                <div class="step" data-step="8">
-                                    <div class="step-number">8</div>
-                                    <div class="step-label">الكفالة</div>
-                                </div>
-                            </div>
-
-                            <!-- Step 1: Basic Information -->
-                            <div class="form-step active" data-step="1">
-                                <h4 class="section-title">البيانات الأساسية</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>رقم ملف اليتيم *</label>
-                                        <input type="text" id="fileNumber" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>الاسم الرباعي *</label>
-                                        <input type="text" id="fullName" required>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>الجنس *</label>
-                                        <select id="gender" required>
-                                            <option value="">اختر الجنس</option>
-                                            <option value="male">ذكر</option>
-                                            <option value="female">أنثى</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>تاريخ الميلاد *</label>
-                                        <input type="date" id="dateOfBirth" required onchange="calculateAge()">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>العمر</label>
-                                        <input type="text" id="age" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>حالة اليتم *</label>
-                                        <select id="orphanStatus" required>
-                                            <option value="">اختر الحالة</option>
-                                            <option value="father">يتيم الأب</option>
-                                            <option value="mother">يتيم الأم</option>
-                                            <option value="both">يتيم الأب والأم</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>رقم الهوية (اختياري)</label>
-                                        <input type="text" id="nationalId" dir="ltr" inputmode="numeric" maxlength="9" placeholder="9 أرقام">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>ملاحظات</label>
-                                        <textarea id="orphanNotes" rows="1"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>اسم الأب</label>
-                                        <input type="text" id="fatherName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>اسم الأم</label>
-                                        <input type="text" id="motherName">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>تاريخ وفاة الأب</label>
-                                        <input type="date" id="fatherDeathDate">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>سبب وفاة الأب</label>
-                                        <input type="text" id="fatherDeathCause">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>تاريخ وفاة الأم</label>
-                                        <input type="date" id="motherDeathDate">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>سبب وفاة الأم</label>
-                                        <input type="text" id="motherDeathCause">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 2: Housing -->
-                            <div class="form-step" data-step="2">
-                                <h4 class="section-title">بيانات السكن</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>عنوان السكن الأصلي</label>
-                                        <input type="text" id="originalAddress">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>عنوان السكن الحالي</label>
-                                        <input type="text" id="currentAddress">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>المحافظة</label>
-                                        <input type="text" id="governorate">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>المدينة</label>
-                                        <input type="text" id="city">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>المنطقة</label>
-                                        <input type="text" id="area">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>حالة السكن</label>
-                                        <select id="housingStatus">
-                                            <option value="">اختر الحالة</option>
-                                            <option value="house">منزل</option>
-                                            <option value="rental">مستأجر</option>
-                                            <option value="relatives">سكن أقارب</option>
-                                            <option value="tent">خيمة</option>
-                                            <option value="shelter">مركز إيواء</option>
-                                            <option value="other">أخرى</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>هل الأسرة نازحة؟</label>
-                                        <div class="radio-group">
-                                            <div class="radio-item">
-                                                <input type="radio" id="displacedYes" name="displaced" value="yes">
-                                                <label for="displacedYes">نعم</label>
-                                            </div>
-                                            <div class="radio-item">
-                                                <input type="radio" id="displacedNo" name="displaced" value="no" checked>
-                                                <label for="displacedNo">لا</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 3: Guardian -->
-                            <div class="form-step" data-step="3">
-                                <h4 class="section-title">ولي الأمر وبيانات الاتصال</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>اسم ولي الأمر</label>
-                                        <input type="text" id="guardianName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>صلة القرابة</label>
-                                        <input type="text" id="guardianRelationship">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>رقم الجوال الأساسي</label>
-                                        <input type="tel" id="primaryPhone">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>رقم الجوال البديل</label>
-                                        <input type="tel" id="alternativePhone">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>مصدر الدخل</label>
-                                        <input type="text" id="incomeSource">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 4: Family -->
-                            <div class="form-step" data-step="4">
-                                <h4 class="section-title">بيانات الأسرة</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>اسم الأسرة *</label>
-                                        <input type="text" id="familyName" list="familyDatalist" required>
-                                        <datalist id="familyDatalist"></datalist>
-                                        <small class="muted">ستُنشأ الأسرة تلقائياً إذا لم تكن مسجلة.</small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>عدد أفراد الأسرة</label>
-                                        <input type="number" id="familyMembers" min="1">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>الحالة الاقتصادية للأسرة</label>
-                                        <select id="economicStatus">
-                                            <option value="">اختر الحالة</option>
-                                            <option value="good">جيدة</option>
-                                            <option value="medium">متوسطة</option>
-                                            <option value="poor">ضعيفة</option>
-                                            <option value="verypoor">ضعيفة جداً</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>الاحتياجات العامة للأسرة</label>
-                                        <textarea id="generalNeeds" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 5: Education -->
-                            <div class="form-step" data-step="5">
-                                <h4 class="section-title">التعليم</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>الحالة التعليمية</label>
-                                        <select id="educationStatus">
-                                            <option value="">اختر الحالة</option>
-                                            <option value="notstudying">لا يدرس</option>
-                                            <option value="kindergarten">رياض الأطفال</option>
-                                            <option value="school">مدرسة</option>
-                                            <option value="other">أخرى</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>اسم المدرسة</label>
-                                        <input type="text" id="schoolName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>الصف الدراسي</label>
-                                        <input type="text" id="grade">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 6: Health -->
-                            <div class="form-step" data-step="6">
-                                <h4 class="section-title">الصحة</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>الحالة الصحية</label>
-                                        <select id="healthStatus">
-                                            <option value="">اختر الحالة</option>
-                                            <option value="healthy">سليم</option>
-                                            <option value="ill">مريض</option>
-                                            <option value="chronic">مريض مزمن</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>المرض / الحالة الصحية</label>
-                                        <input type="text" id="healthCondition">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>هل توجد إعاقة؟</label>
-                                        <div class="radio-group">
-                                            <div class="radio-item">
-                                                <input type="radio" id="disabilityYes" name="disability" value="yes" onchange="toggleDisabilityType(true)">
-                                                <label for="disabilityYes">نعم</label>
-                                            </div>
-                                            <div class="radio-item">
-                                                <input type="radio" id="disabilityNo" name="disability" value="no" checked onchange="toggleDisabilityType(false)">
-                                                <label for="disabilityNo">لا</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="disabilityTypeGroup" style="display: none;">
-                                        <label>نوع الإعاقة</label>
-                                        <input type="text" id="disabilityType">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>العلاج المطلوب</label>
-                                        <textarea id="requiredTreatment" rows="2"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 7: Needs -->
-                            <div class="form-step" data-step="7">
-                                <h4 class="section-title">احتياجات اليتيم</h4>
-                                <div class="checkbox-group">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need1" value="food">
-                                        <label for="need1">غذاء</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need2" value="clothes">
-                                        <label for="need2">ملابس</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need3" value="shoes">
-                                        <label for="need3">أحذية</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need4" value="education">
-                                        <label for="need4">تعليم</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need5" value="health">
-                                        <label for="need5">صحة</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need6" value="medicine">
-                                        <label for="need6">أدوية</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need7" value="housing">
-                                        <label for="need7">سكن</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need8" value="furniture">
-                                        <label for="need8">أثاث</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need9" value="electronics">
-                                        <label for="need9">أجهزة إلكترونية</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need10" value="transport">
-                                        <label for="need10">مواصلات</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need11" value="training">
-                                        <label for="need11">تدريب مهني</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need12" value="psychological">
-                                        <label for="need12">دعم نفسي واجتماعي</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need13" value="special">
-                                        <label for="need13">احتياجات خاصة</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need14" value="emergency">
-                                        <label for="need14">طارئ</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="need15" value="other">
-                                        <label for="need15">أخرى</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Step 8: Sponsorship -->
-                            <div class="form-step" data-step="8">
-                                <h4 class="section-title">الكفالة</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>حالة الكفالة *</label>
-                                        <select id="sponsorshipStatus" required>
-                                            <option value="">اختر الحالة</option>
-                                            <option value="sponsored">مكفول</option>
-                                            <option value="unsponsored">غير مكفول</option>
-                                            <option value="needs">بحاجة إلى كفيل</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="visibility: hidden;">
-                                    السابق
-                                </button>
-                                <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
-                                    التالي
-                                </button>
-                                <button type="submit" class="btn btn-success" id="saveBtn" style="display: none;">
-                                    حفظ البيانات ✓
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Other pages will be added similarly -->
-            
-            <!-- Settings Page -->
-            <div id="settingsPage" class="page-content hidden">
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">معلومات الحساب</h2>
-                    </div>
-                    <div class="info-grid" id="accountInfo">
-                        <!-- Will be populated dynamically -->
-                    </div>
-                </div>
-
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">تغيير كلمة المرور</h2>
-                    </div>
-                    <form id="changePasswordForm" onsubmit="changePassword(event)">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>كلمة المرور الجديدة</label>
-                                <input type="password" id="newPassword" required minlength="6" autocomplete="new-password">
-                            </div>
-                            <div class="form-group">
-                                <label>تأكيد كلمة المرور</label>
-                                <input type="password" id="confirmPassword" required minlength="6" autocomplete="new-password">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            تحديث كلمة المرور
-                        </button>
-                    </form>
-                    <p class="muted mt-4">تُدار كلمات المرور بشكل آمن عبر Supabase Auth ولا يتم تخزينها في قاعدة بيانات التطبيق.</p>
-                </div>
-
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">الاسم المعروض</h2>
-                    </div>
-                    <form id="displayNameForm" onsubmit="updateDisplayName(event)">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>الاسم المعروض</label>
-                                <input type="text" id="displayNameInput" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            حفظ الاسم
-                        </button>
-                    </form>
-                </div>
-
-                <div class="content-card hidden" id="userManagementCard">
-                    <div class="card-header">
-                        <h2 class="card-title">إدارة المستخدمين والصلاحيات</h2>
-                        <button class="btn btn-primary" onclick="openUserModal()">
-                            + إضافة مستخدم
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="data-table" id="usersTable">
-                            <thead>
-                                <tr>
-                                    <th>الاسم</th>
-                                    <th>اسم المستخدم</th>
-                                    <th>البريد الإلكتروني</th>
-                                    <th>الدور</th>
-                                    <th>الحالة</th>
-                                    <th>آخر دخول</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody"></tbody>
-                        </table>
-                    </div>
-                    <p class="muted mt-4">تتم إدارة المستخدمين عبر واجهة خادم آمنة (Server API) ولا يتم كشف أي مفاتيح خاصة في المتصفح. الأدوار المتاحة: مدير / موظف (إضافة وتعديل) / مشاهد (قراءة فقط).</p>
-                </div>
-
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">معلومات النظام وقاعدة البيانات</h2>
-                    </div>
-                    <div id="storageInfo">
-                        <!-- Will be populated dynamically -->
-                    </div>
-                    <p class="muted mt-4">قاعدة البيانات: Supabase PostgreSQL مع حماية على مستوى الصفوف (RLS). النسخ الاحتياطي الكامل لقاعدة البيانات يتم عبر Supabase، والتصدير من التطبيق هو تصدير لبيانات التطبيق فقط.</p>
-                </div>
-            </div>
-
-            <!-- Backup Page -->
-            <div id="backupPage" class="page-content hidden">
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">النسخ الاحتياطي والبيانات</h2>
-                    </div>
-
-                    <div class="inline-note">
-                        البيانات محفوظة في قاعدة بيانات PostgreSQL آمنة عبر الإنترنت (Supabase).<br>
-                        <strong>تصدير التطبيق ليس نسخة احتياطية كاملة لقاعدة البيانات</strong> — النسخ الاحتياطي الكامل (Disaster Recovery) مسؤولية منصة Supabase، أما التصدير أدناه فهو لتصدير بيانات التطبيق أو أرشفتها.
-                    </div>
-
-                    <h3 class="section-title">تصدير بيانات التطبيق (JSON)</h3>
-                    <p style="margin-bottom: 16px; color: var(--text-secondary);">
-                        تصدير جميع الأيتام والأسر والمساعدات والمتابعات إلى ملف JSON — للمدير فقط
-                    </p>
-                    <button class="btn btn-primary" onclick="exportData()">
-                        📥 تصدير بيانات التطبيق
-                    </button>
-
-                    <hr style="margin: 32px 0; border: none; border-top: 1px solid var(--border-color);">
-
-                    <h3 class="section-title">ترحيل بيانات النسخة القديمة (المحلية)</h3>
-                    <p style="margin-bottom: 16px; color: var(--text-secondary);">
-                        استيراد ملف JSON من النسخة القديمة التي كانت تعمل بالتخزين المحلي. يتم فحص السجلات وتجاهل المكرر — للمدير فقط
-                    </p>
-                    <div class="file-upload" onclick="document.getElementById('importFile').click()">
-                        <input type="file" id="importFile" accept=".json" onchange="importData(event)" style="display: none;">
-                        <div style="font-size: 48px; margin-bottom: 12px;">📤</div>
-                        <div>انقر هنا لاختيار ملف النسخة الاحتياطية القديمة</div>
-                    </div>
-
-                    <hr style="margin: 32px 0; border: none; border-top: 1px solid var(--border-color);">
-
-                    <h3 class="section-title">حذف جميع البيانات</h3>
-                    <div class="warning-box" style="background: #fee2e2; border-color: #ef4444;">
-                        <strong style="color: #991b1b;">تحذير خطير:</strong>
-                        <p style="color: #7f1d1d;">سيتم حذف جميع سجلات الأيتام والأسر والمساعدات والمتابعات نهائياً من قاعدة البيانات. لن يُحذف سجل النشاط وسجل المستخدمين. لا يمكن التراجع عن هذا الإجراء.</p>
-                    </div>
-                    <button class="btn btn-danger" onclick="confirmClearAll()">
-                        🗑️ حذف جميع بيانات السجلات
-                    </button>
-                </div>
-            </div>
-
-            <!-- Statistics Page -->
-            <div id="statisticsPage" class="page-content hidden">
-                <h2 class="page-title mb-4">الإحصاءات والتحليلات</h2>
-                <div class="charts-grid" id="chartsContainer">
-                    <!-- Charts will be rendered here -->
-                </div>
-            </div>
-
-            <!-- Reports Page -->
-            <div id="reportsPage" class="page-content hidden">
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title">التقارير والتحميل</h2>
-                    </div>
-                    
-                    <div class="inline-note hidden" id="reportsPermNote">
-                        التقارير والتصدير متاحة لمستخدمي صلاحية «موظف» و«مدير» فقط.
-                    </div>
-                    <div class="stats-grid" id="reportsCards">
-                        <div class="stat-card" onclick="generateReport('orphan')" style="cursor: pointer;">
-                            <div class="stat-icon blue">👤</div>
-                            <div class="stat-content">
-                                <div class="stat-label">تقرير يتيم كامل</div>
-                                <div class="stat-value">PDF</div>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="generateReport('family')" style="cursor: pointer;">
-                            <div class="stat-icon green">👨‍👩‍👧‍👦</div>
-                            <div class="stat-content">
-                                <div class="stat-label">تقرير الأسرة</div>
-                                <div class="stat-value">PDF</div>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="generateReport('allOrphans')" style="cursor: pointer;">
-                            <div class="stat-icon yellow">📋</div>
-                            <div class="stat-content">
-                                <div class="stat-label">تقرير جميع الأيتام</div>
-                                <div class="stat-value">CSV/Excel</div>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="generateReport('assistance')" style="cursor: pointer;">
-                            <div class="stat-icon purple">🤝</div>
-                            <div class="stat-content">
-                                <div class="stat-label">تقرير المساعدات</div>
-                                <div class="stat-value">CSV</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assistance and FollowUp pages would be added similarly -->
-        </main>
-    </div>
-
-            <!-- Family Form Modal -->
-    <div id="familyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="familyModalTitle">إضافة أسرة</h3>
-                <button class="modal-close" onclick="closeFamilyModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="familyForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>اسم الأسرة *</label>
-                            <input type="text" id="fam_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>رمز الأسرة</label>
-                            <input type="text" id="fam_code" dir="ltr" placeholder="يُنشأ تلقائياً إذا تُرك فارغاً">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>اسم ولي الأمر</label>
-                            <input type="text" id="fam_guardian">
-                        </div>
-                        <div class="form-group">
-                            <label>رقم الجوال</label>
-                            <input type="tel" id="fam_phone" dir="ltr" placeholder="05XXXXXXXX">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>المنطقة / المحافظة</label>
-                            <input type="text" id="fam_district">
-                        </div>
-                        <div class="form-group">
-                            <label>العنوان</label>
-                            <input type="text" id="fam_address">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>حالة السكن</label>
-                            <select id="fam_housing">
-                                <option value="">اختر الحالة</option>
-                                <option value="house">منزل</option>
-                                <option value="rental">مستأجر</option>
-                                <option value="relatives">سكن أقارب</option>
-                                <option value="tent">خيمة</option>
-                                <option value="shelter">مركز إيواء</option>
-                                <option value="other">أخرى</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>مصدر الدخل</label>
-                            <input type="text" id="fam_income">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>عدد أفراد الأسرة</label>
-                            <input type="number" id="fam_members" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label>الحالة الاقتصادية</label>
-                            <select id="fam_economic">
-                                <option value="">اختر الحالة</option>
-                                <option value="good">جيدة</option>
-                                <option value="medium">متوسطة</option>
-                                <option value="poor">ضعيفة</option>
-                                <option value="verypoor">ضعيفة جداً</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>النزوح</label>
-                            <select id="fam_displaced">
-                                <option value="no">غير نازحة</option>
-                                <option value="yes">نازحة</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>ملاحظات</label>
-                            <textarea id="fam_notes" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeFamilyModal()">إلغاء</button>
-                        <button type="submit" class="btn btn-success">حفظ الأسرة ✓</button>
-                    </div>
-                </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-right">
+                    <thead class="bg-gray-50 text-gray-700 font-bold">
+                        <tr>
+                            <th class="p-4">رقم الملف</th>
+                            <th class="p-4">الاسم الرباعي</th>
+                            <th class="p-4">الجنس</th>
+                            <th class="p-4">العمر</th>
+                            <th class="p-4">حالة اليتم</th>
+                            <th class="p-4">الأسرة</th>
+                            <th class="p-4">المنطقة</th>
+                            <th class="p-4">الكفالة</th>
+                            <th class="p-4">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orphansTableBody">
+                        <tr>
+                            <td colspan="9" class="p-8 text-center text-gray-500">جاري التحميل...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
+    </main>
+</div>
 
-    <!-- View Orphan Modal -->
-    <div id="orphanViewModal" class="modal">
-        <div class="modal-content print-area">
-            <div class="modal-header">
-                <h3 class="modal-title" id="orphanViewTitle">بيانات اليتيم</h3>
-                <button class="modal-close" onclick="closeViewOrphanModal()">×</button>
-            </div>
-            <div class="modal-body" id="orphanViewContent"></div>
-            <div class="modal-footer no-print">
-                <button class="btn btn-secondary" onclick="printOrphanView()">🖨️ طباعة</button>
-                <button class="btn btn-info" onclick="pdfOrphanView()">📄 PDF</button>
-                <button class="btn btn-info" onclick="showQRFromView()">QR</button>
-                <button class="btn btn-primary perm-edit" onclick="editFromView()">تعديل</button>
-            </div>
+<!-- نافذة إضافة أسرة -->
+<div id="addFamilyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-gray-800">إضافة أسرة جديدة</h3>
+            <button onclick="closeFamilyModal()" class="text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
         </div>
-    </div>
-
-    <!-- View Family Modal -->
-    <div id="familyViewModal" class="modal">
-        <div class="modal-content print-area">
-            <div class="modal-header">
-                <h3 class="modal-title" id="familyViewTitle">بيانات الأسرة</h3>
-                <button class="modal-close" onclick="closeViewFamilyModal()">×</button>
-            </div>
-            <div class="modal-body" id="familyViewContent"></div>
-            <div class="modal-footer no-print">
-                <button class="btn btn-secondary" onclick="printFamilyView()">🖨️ طباعة</button>
-                <button class="btn btn-info" onclick="showFamilyQRFromView()">QR</button>
-                <button class="btn btn-primary perm-edit" onclick="editFamilyFromView()">تعديل</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Assistance Form Modal -->
-    <div id="assistanceModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="assistanceModalTitle">إضافة مساعدة</h3>
-                <button class="modal-close" onclick="closeAssistanceModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="assistanceForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>اليتيم *</label>
-                            <input type="text" id="as_orphan" list="orphanDatalist" required placeholder="ابحث بالاسم أو رقم الملف...">
-                            <datalist id="orphanDatalist"></datalist>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>التاريخ *</label>
-                            <input type="date" id="as_date" required>
-                        </div>
-                        <div class="form-group">
-                            <label>النوع *</label>
-                            <select id="as_type" required>
-                                <option value="">اختر النوع</option>
-                                <option value="material">عينية</option>
-                                <option value="food">غذائية</option>
-                                <option value="cash">مالية</option>
-                                <option value="medical">طبية</option>
-                                <option value="education">تعليمية</option>
-                                <option value="housing">سكنية</option>
-                                <option value="other">أخرى</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>المبلغ (إن وجد)</label>
-                            <input type="number" id="as_amount" min="0" step="0.01">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>ملاحظات</label>
-                            <textarea id="as_notes" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeAssistanceModal()">إلغاء</button>
-                        <button type="submit" class="btn btn-success">حفظ ✓</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Follow-up Form Modal -->
-    <div id="followupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="followupModalTitle">إضافة متابعة</h3>
-                <button class="modal-close" onclick="closeFollowupModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="followupForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>اليتيم *</label>
-                            <input type="text" id="fu_orphan" list="orphanDatalist" required placeholder="ابحث بالاسم أو رقم الملف...">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>تاريخ المتابعة *</label>
-                            <input type="date" id="fu_date" required>
-                        </div>
-                        <div class="form-group">
-                            <label>تاريخ المتابعة القادمة</label>
-                            <input type="date" id="fu_next_date">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>الملاحظات *</label>
-                            <textarea id="fu_notes" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeFollowupModal()">إلغاء</button>
-                        <button type="submit" class="btn btn-success">حفظ ✓</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- User Form Modal (Admin) -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">إضافة مستخدم</h3>
-                <button class="modal-close" onclick="closeUserModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="userForm">
-                    <div id="userModalAlert" class="alert alert-error"></div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>الاسم الكامل *</label>
-                            <input type="text" id="u_full_name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>اسم المستخدم</label>
-                            <input type="text" id="u_username">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>البريد الإلكتروني *</label>
-                            <input type="email" id="u_email" required dir="ltr">
-                        </div>
-                        <div class="form-group">
-                            <label>الدور *</label>
-                            <select id="u_role" required>
-                                <option value="staff">موظف — إضافة وتعديل بدون حذف</option>
-                                <option value="viewer">مشاهد — قراءة فقط</option>
-                                <option value="admin">مدير — كل الصلاحيات</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>كلمة المرور المؤقتة</label>
-                            <input type="text" id="u_password" dir="ltr" placeholder="اتركها فارغة لتوليد كلمة مرور عشوائية" minlength="6">
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeUserModal()">إلغاء</button>
-                        <button type="submit" class="btn btn-success">إنشاء المستخدم ✓</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Generic Confirm Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content" style="max-width: 480px;">
-            <div class="modal-header">
-                <h3 class="modal-title" id="confirmTitle">تأكيد</h3>
-                <button class="modal-close" onclick="cancelConfirm()">×</button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmMessage"></p>
-                <div class="form-group hidden" id="confirmInputGroup">
-                    <label id="confirmInputLabel"></label>
-                    <input type="text" id="confirmInput" autocomplete="off">
+        <form id="addFamilyForm" class="p-6 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">اسم الأسرة *</label>
+                    <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">عدد الأفراد</label>
+                    <input type="number" name="members_count" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">الحالة الاقتصادية</label>
+                    <select name="economic_status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">اختر</option>
+                        <option value="good">جيدة</option>
+                        <option value="medium">متوسطة</option>
+                        <option value="poor">ضعيفة</option>
+                        <option value="very_poor">ضعيفة جداً</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">هل الأسرة نازحة؟</label>
+                    <select name="is_displaced" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="false">لا</option>
+                        <option value="true">نعم</option>
+                    </select>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="cancelConfirm()">إلغاء</button>
-                <button class="btn btn-danger" id="confirmOkBtn">تأكيد</button>
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="closeFamilyModal()" 
+                    class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">إلغاء</button>
+                <button type="submit" 
+                    class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">حفظ البيانات</button>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 
-    <!-- Orphan Picker Modal (Reports) -->
-    <div id="pickOrphanModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="pickOrphanTitle">اختر يتيماً</h3>
-                <button class="modal-close" onclick="closePickOrphan()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" id="pickOrphanSearch" placeholder="اكتب الاسم أو رقم الملف ثم اختر من القائمة..." oninput="searchPickOrphan()">
+<!-- نافذة إضافة يتيم -->
+<div id="addOrphanModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-gray-800">إضافة يتيم جديد</h3>
+            <button onclick="closeOrphanModal()" class="text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
+        </div>
+        <form id="addOrphanForm" class="p-6 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">رقم الملف *</label>
+                    <input type="text" name="file_number" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-                <div id="pickOrphanResults"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Family Picker Modal (Reports) -->
-    <div id="pickFamilyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">اختر أسرة</h3>
-                <button class="modal-close" onclick="closePickFamily()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" id="pickFamilySearch" placeholder="اكتب اسم الأسرة ثم اختر من القائمة..." oninput="searchPickFamily()">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">الاسم الرباعي *</label>
+                    <input type="text" name="full_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-                <div id="pickFamilyResults"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QR Modal -->
-    <div id="qrModal" class="modal">
-        <div class="modal-content print-area">
-            <div class="modal-header">
-                <h3 class="modal-title">رمز QR</h3>
-                <button class="modal-close" onclick="closeQRModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="qr-container" id="qrContent">
-                    <!-- QR code will be generated here -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">الجنس *</label>
+                    <select name="gender" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">اختر</option>
+                        <option value="male">ذكر</option>
+                        <option value="female">أنثى</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">تاريخ الميلاد *</label>
+                    <input type="date" name="birth_date" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">حالة اليتم *</label>
+                    <select name="orphan_status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">اختر</option>
+                        <option value="father">يتيم الأب</option>
+                        <option value="mother">يتيم الأم</option>
+                        <option value="both">يتيم الأب والأم</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">حالة الكفالة *</label>
+                    <select name="sponsorship_status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">اختر</option>
+                        <option value="sponsored">مكفول</option>
+                        <option value="unsponsored">غير مكفول</option>
+                        <option value="needs_sponsor">بحاجة إلى كفيل</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">المنطقة</label>
+                    <input type="text" name="district" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="downloadQR()">تحميل PNG</button>
-                <button class="btn btn-primary" onclick="printQR()">طباعة</button>
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="closeOrphanModal()" 
+                    class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">إلغاء</button>
+                <button type="submit" 
+                    class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">حفظ البيانات</button>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 
-    <!-- Overlay for loading -->
-    <div id="overlay" class="overlay">
-        <div class="spinner"></div>
-    </div>
-
-    <script type="module" src="/src/main.js"></script>
 </body>
 </html>
