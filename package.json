@@ -1,0 +1,27 @@
+{
+  "name": "daloul-orphans-db",
+  "private": true,
+  "version": "2.0.0",
+  "description": "قاعدة بيانات أيتام عائلة دلول — نظام إدارة كامل عبر الإنترنت (Supabase + Vercel)",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:full": "vercel dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:db": "bash tests/local-pg/run.sh",
+    "test:rls": "node tests/rls-test.mjs",
+    "test:e2e": "node tests/e2e-ui-test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "vite": "^5.4.8",
+    "ws": "^8.21.3"
+  }
+}
