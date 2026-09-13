@@ -6,19 +6,13 @@
     <title>قاعدة بيانات أيتام عائلة دلول</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
         body { font-family: 'Tajawal', sans-serif; }
-        .sidebar { transition: all 0.3s; }
-        .nav-item.active { background: #667eea; }
         .modal { display: none; }
         .modal.active { display: flex; }
         .page { display: none; }
         .page.active { display: block; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -29,6 +23,7 @@
         <h1 class="text-3xl font-bold text-center text-blue-800 mb-2">قاعدة بيانات أيتام عائلة دلول</h1>
         <p class="text-center text-gray-600 mb-6">نظام إدارة بيانات الأيتام والأسر</p>
         
+        <!-- نموذج تسجيل الدخول -->
         <div id="loginSection">
             <form id="loginForm" class="space-y-4">
                 <div>
@@ -42,9 +37,18 @@
                 <div id="loginError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
                 <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-bold">تسجيل الدخول</button>
             </form>
+            
+            <!-- زر إنشاء حساب جديد -->
+            <div class="mt-4 text-center">
+                <button type="button" onclick="showRegister()" class="text-blue-600 hover:text-blue-800 font-bold text-sm underline">
+                    ليس لديك حساب؟ إنشاء حساب جديد
+                </button>
+            </div>
+            
             <p class="text-xs text-center text-gray-500 mt-6">🔒 تنبيه مهم: هذا النظام يعمل الآن مع قاعدة بيانات سحابية آمنة.</p>
         </div>
 
+        <!-- نموذج إنشاء حساب -->
         <div id="registerSection" class="hidden">
             <form id="registerForm" class="space-y-4">
                 <div>
@@ -65,9 +69,15 @@
                 </div>
                 <div id="regError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
                 <div id="regSuccess" class="hidden bg-green-50 text-green-600 p-3 rounded-lg text-sm"></div>
-                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-bold">إنشاء حساب المدير الأول</button>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-bold">إنشاء الحساب</button>
             </form>
-            <p class="text-xs text-center text-gray-500 mt-4">هذه الشاشة متاحة فقط عندما لا يوجد أي حساب مدير.</p>
+            
+            <!-- زر العودة لتسجيل الدخول -->
+            <div class="mt-4 text-center">
+                <button type="button" onclick="showLogin()" class="text-blue-600 hover:text-blue-800 font-bold text-sm underline">
+                    العودة لتسجيل الدخول
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -75,534 +85,176 @@
 <!-- التطبيق الرئيسي -->
 <div id="mainApp" class="hidden min-h-screen flex">
     <!-- القائمة الجانبية -->
-    <aside class="sidebar w-64 bg-slate-800 text-white fixed h-full overflow-y-auto">
+    <aside class="w-64 bg-slate-800 text-white fixed h-full overflow-y-auto">
         <div class="p-4 border-b border-slate-700">
             <h2 class="text-xl font-bold mb-1">عائلة دلول</h2>
-            <p class="text-xs text-gray-400">نظام إدارة بيانات الأيتام والأسر</p>
+            <p class="text-xs text-gray-400">نظام إدارة بيانات الأيتام</p>
         </div>
         <nav class="p-4 space-y-1">
-            <a href="#" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="dashboard">
+            <a href="#" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="dashboard">
                 <span>🏠</span><span>الرئيسية</span>
             </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="orphans">
-                <span>👶</span><span>الأيتام</span>
+            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="orphans">
+                <span></span><span>الأيتام</span>
             </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="families">
-                <span>‍👩‍👧👦</span><span>الأسر</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="assistance">
-                <span>🤝</span><span>المساعدات</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="followups">
-                <span>📋</span><span>المتابعة</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="reports">
-                <span>📊</span><span>التقارير</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="stats">
-                <span>📈</span><span>الإحصاءات</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="logs">
-                <span>📜</span><span>سجل النشاط</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="backup">
-                <span></span><span>النسخ الاحتياطي</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition" data-page="settings">
-                <span>⚙️</span><span>إعدادات المدير</span>
+            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="families">
+                <span>👨‍👩‍👧‍👦</span><span>الأسر</span>
             </a>
         </nav>
         <div class="p-4 border-t border-slate-700 mt-auto">
             <div class="mb-3">
                 <p class="text-sm text-gray-400">المستخدم</p>
                 <p id="userNameDisplay" class="font-bold text-white">-</p>
-                <span id="userRoleDisplay" class="text-xs bg-blue-600 px-2 py-1 rounded">مدير النظام</span>
             </div>
-            <button onclick="doLogout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition text-sm">خروج</button>
+            <button onclick="doLogout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm">خروج</button>
         </div>
     </aside>
 
     <!-- المحتوى الرئيسي -->
-    <main class="flex-1 ml-64 p-8 overflow-y-auto">
-        <!-- الصفحة الرئيسية -->
+    <main class="flex-1 mr-64 p-8 overflow-y-auto">
         <div id="page-dashboard" class="page active">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">الرئيسية</h1>
-                <p class="text-gray-600">نظرة عامة على النظام</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-blue-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm mb-1">إجمالي الأيتام</p>
-                            <p id="statTotalOrphans" class="text-4xl font-bold text-blue-600">0</p>
-                        </div>
-                        <span class="text-5xl">👶</span>
-                    </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">الرئيسية</h1>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <p class="text-gray-600 text-sm">إجمالي الأيتام</p>
+                    <p id="statOrphans" class="text-4xl font-bold text-blue-600 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-green-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm mb-1">إجمالي الأسر</p>
-                            <p id="statTotalFamilies" class="text-4xl font-bold text-green-600">0</p>
-                        </div>
-                        <span class="text-5xl">👨‍‍👧‍👦</span>
-                    </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <p class="text-gray-600 text-sm">إجمالي الأسر</p>
+                    <p id="statFamilies" class="text-4xl font-bold text-green-600 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-purple-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm mb-1">ذكور</p>
-                            <p id="statMaleOrphans" class="text-4xl font-bold text-purple-600">0</p>
-                        </div>
-                        <span class="text-5xl">👦</span>
-                    </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <p class="text-gray-600 text-sm">ذكور</p>
+                    <p id="statMale" class="text-4xl font-bold text-purple-600 mt-2">0</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-pink-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm mb-1">إناث</p>
-                            <p id="statFemaleOrphans" class="text-4xl font-bold text-pink-600">0</p>
-                        </div>
-                        <span class="text-5xl">👧</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">آخر الأيتام المسجلين</h2>
-                    <button onclick="openOrphanModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">+ إضافة يتيم جديد</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-right">رقم الملف</th>
-                                <th class="px-4 py-3 text-right">الاسم</th>
-                                <th class="px-4 py-3 text-right">الجنس</th>
-                                <th class="px-4 py-3 text-right">الأسرة</th>
-                                <th class="px-4 py-3 text-right">تاريخ التسجيل</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recentOrphansTable"></tbody>
-                    </table>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <p class="text-gray-600 text-sm">إناث</p>
+                    <p id="statFemale" class="text-4xl font-bold text-pink-600 mt-2">0</p>
                 </div>
             </div>
         </div>
 
-        <!-- صفحة الأيتام -->
         <div id="page-orphans" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">إدارة الأيتام</h1>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">الأيتام</h1>
+                <button onclick="openOrphanModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">+ إضافة يتيم</button>
             </div>
-            
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <div class="flex flex-wrap gap-4 mb-4">
-                    <input type="text" id="orphansSearch" placeholder="بحث بالاسم أو رقم الملف..." class="flex-1 min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                    <select id="orphansGenderFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
-                        <option value="">الجنس (الكل)</option>
-                        <option value="male">ذكر</option>
-                        <option value="female">أنثى</option>
-                    </select>
-                    <select id="orphansStatusFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
-                        <option value="">حالة اليتم (الكل)</option>
-                        <option value="father">يتيم الأب</option>
-                        <option value="mother">يتيم الأم</option>
-                        <option value="both">يتيم الأب والأم</option>
-                    </select>
-                    <select id="orphansSponsorshipFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
-                        <option value="">حالة الكفالة (الكل)</option>
-                        <option value="sponsored">مكفول</option>
-                        <option value="unsponsored">غير مكفول</option>
-                        <option value="needs_sponsor">بحاجة إلى كفيل</option>
-                    </select>
-                    <button onclick="clearOrphansFilters()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">مسح الفلاتر</button>
-                    <button onclick="openOrphanModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">+ إضافة يتيم</button>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-right">رقم الملف</th>
-                                <th class="px-4 py-3 text-right">الاسم الرباعي</th>
-                                <th class="px-4 py-3 text-right">الجنس</th>
-                                <th class="px-4 py-3 text-right">العمر</th>
-                                <th class="px-4 py-3 text-right">حالة اليتم</th>
-                                <th class="px-4 py-3 text-right">الأسرة</th>
-                                <th class="px-4 py-3 text-right">المنطقة</th>
-                                <th class="px-4 py-3 text-right">الكفالة</th>
-                                <th class="px-4 py-3 text-right">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orphansTableBody"></tbody>
-                    </table>
-                </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-right">رقم الملف</th>
+                            <th class="px-4 py-3 text-right">الاسم</th>
+                            <th class="px-4 py-3 text-right">الجنس</th>
+                            <th class="px-4 py-3 text-right">العمر</th>
+                            <th class="px-4 py-3 text-right">الكفالة</th>
+                            <th class="px-4 py-3 text-right">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orphansTableBody"></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- صفحة الأسر -->
         <div id="page-families" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">إدارة الأسر</h1>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <input type="text" id="familiesSearch" placeholder="بحث باسم الأسرة..." class="flex-1 max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                    <button onclick="openFamilyModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">+ إضافة أسرة</button>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-right">اسم الأسرة</th>
-                                <th class="px-4 py-3 text-right">رمز الأسرة</th>
-                                <th class="px-4 py-3 text-right">ولي الأمر</th>
-                                <th class="px-4 py-3 text-right">الجوال</th>
-                                <th class="px-4 py-3 text-right">المنطقة</th>
-                                <th class="px-4 py-3 text-right">عدد الأيتام</th>
-                                <th class="px-4 py-3 text-right">الحالة الاقتصادية</th>
-                                <th class="px-4 py-3 text-right">النزوح</th>
-                                <th class="px-4 py-3 text-right">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="familiesTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- صفحة المساعدات -->
-        <div id="page-assistance" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">سجل المساعدات</h1>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">الأسر</h1>
+                <button onclick="openFamilyModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">+ إضافة أسرة</button>
             </div>
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="openAssistanceModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">+ إضافة مساعدة</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-right">اليتيم</th>
-                                <th class="px-4 py-3 text-right">رقم الملف</th>
-                                <th class="px-4 py-3 text-right">التاريخ</th>
-                                <th class="px-4 py-3 text-right">النوع</th>
-                                <th class="px-4 py-3 text-right">المبلغ</th>
-                                <th class="px-4 py-3 text-right">ملاحظات</th>
-                                <th class="px-4 py-3 text-right">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="assistanceTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- صفحة المتابعة -->
-        <div id="page-followups" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">سجل المتابعة</h1>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="openFollowupModal()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">+ إضافة متابعة</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-right">اليتيم</th>
-                                <th class="px-4 py-3 text-right">رقم الملف</th>
-                                <th class="px-4 py-3 text-right">تاريخ المتابعة</th>
-                                <th class="px-4 py-3 text-right">الملاحظات</th>
-                                <th class="px-4 py-3 text-right">المتابعة القادمة</th>
-                                <th class="px-4 py-3 text-right">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="followupsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- صفحة سجل النشاط -->
-        <div id="page-logs" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">سجل النشاط</h1>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-right">الوقت</th>
-                                <th class="px-4 py-3 text-right">المستخدم</th>
-                                <th class="px-4 py-3 text-right">الإجراء</th>
-                                <th class="px-4 py-3 text-right">الكيان</th>
-                                <th class="px-4 py-3 text-right">الوصف</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- صفحة الإحصاءات -->
-        <div id="page-stats" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">الإحصاءات والتحليلات</h1>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="statsContainer"></div>
-        </div>
-
-        <!-- صفحة التقارير -->
-        <div id="page-reports" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">التقارير والتحميل</h1>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button onclick="exportOrphanReport()" class="p-6 border-2 border-blue-600 rounded-xl hover:bg-blue-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2">👤 تقرير يتيم كامل</h3>
-                        <p class="text-gray-600">تصدير تقرير PDF مفصل عن يتيم محدد</p>
-                    </button>
-                    <button onclick="exportFamilyReport()" class="p-6 border-2 border-green-600 rounded-xl hover:bg-green-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2">👨‍👩👧‍👦 تقرير الأسرة</h3>
-                        <p class="text-gray-600">تصدير تقرير PDF عن أسرة محددة</p>
-                    </button>
-                    <button onclick="exportAllOrphansCSV()" class="p-6 border-2 border-purple-600 rounded-xl hover:bg-purple-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2"> تقرير جميع الأيتام</h3>
-                        <p class="text-gray-600">تصدير CSV/Excel لجميع الأيتام</p>
-                    </button>
-                    <button onclick="exportAssistanceCSV()" class="p-6 border-2 border-orange-600 rounded-xl hover:bg-orange-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2">🤝 تقرير المساعدات</h3>
-                        <p class="text-gray-600">تصدير CSV لجميع المساعدات</p>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- صفحة النسخ الاحتياطي -->
-        <div id="page-backup" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">النسخ الاحتياطي والبيانات</h1>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 space-y-6">
-                <div class="p-4 bg-blue-50 rounded-lg">
-                    <p class="text-sm text-blue-800">💡 البيانات محفوظة في قاعدة بيانات PostgreSQL آمنة عبر الإنترنت (Supabase).</p>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-3"> تصدير بيانات التطبيق</h3>
-                    <button onclick="exportBackup()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">تصدير جميع البيانات (JSON)</button>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-3"> استيراد نسخة احتياطية</h3>
-                    <input type="file" id="importBackupFile" accept=".json" class="hidden" onchange="importBackup(event)">
-                    <button onclick="document.getElementById('importBackupFile').click()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">استيراد من ملف JSON</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- صفحة الإعدادات -->
-        <div id="page-settings" class="page">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">إعدادات المدير</h1>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 space-y-6">
-                <div>
-                    <h3 class="font-bold text-lg mb-4">تغيير كلمة المرور</h3>
-                    <form id="changePasswordForm" class="space-y-4 max-w-md">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور الجديدة</label>
-                            <input type="password" id="newPassword" required minlength="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">تأكيد كلمة المرور</label>
-                            <input type="password" id="confirmNewPassword" required minlength="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                        </div>
-                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">تحديث كلمة المرور</button>
-                    </form>
-                </div>
-                <div id="adminPanel" class="hidden">
-                    <h3 class="font-bold text-lg mb-4">إدارة المستخدمين</h3>
-                    <button onclick="openUserModal()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 mb-4">+ إضافة مستخدم جديد</button>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-right">الاسم</th>
-                                    <th class="px-4 py-3 text-right">اسم المستخدم</th>
-                                    <th class="px-4 py-3 text-right">الدور</th>
-                                    <th class="px-4 py-3 text-right">الحالة</th>
-                                    <th class="px-4 py-3 text-right">إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-right">الاسم</th>
+                            <th class="px-4 py-3 text-right">ولي الأمر</th>
+                            <th class="px-4 py-3 text-right">الهاتف</th>
+                            <th class="px-4 py-3 text-right">المنطقة</th>
+                            <th class="px-4 py-3 text-right">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="familiesTableBody"></tbody>
+                </table>
             </div>
         </div>
     </main>
 </div>
 
-<!-- Modals -->
+<!-- Modal إضافة يتيم -->
 <div id="orphanModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
         <div class="p-6 border-b flex justify-between items-center">
-            <h2 class="text-2xl font-bold">إضافة يتيم جديد</h2>
-            <button onclick="closeModal('orphanModal')" class="text-3xl text-gray-500 hover:text-gray-700">&times;</button>
+            <h2 class="text-2xl font-bold">إضافة يتيم</h2>
+            <button onclick="closeModal('orphanModal')" class="text-3xl">&times;</button>
         </div>
         <form id="orphanForm" class="p-6 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 <div><label class="block text-sm font-medium mb-1">رقم الملف *</label><input type="text" id="oFileNumber" required class="w-full px-4 py-2 border rounded-lg"></div>
-                <div><label class="block text-sm font-medium mb-1">الاسم الرباعي *</label><input type="text" id="oFullName" required class="w-full px-4 py-2 border rounded-lg"></div>
+                <div><label class="block text-sm font-medium mb-1">الاسم *</label><input type="text" id="oName" required class="w-full px-4 py-2 border rounded-lg"></div>
                 <div><label class="block text-sm font-medium mb-1">الجنس *</label><select id="oGender" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر</option><option value="male">ذكر</option><option value="female">أنثى</option></select></div>
                 <div><label class="block text-sm font-medium mb-1">تاريخ الميلاد *</label><input type="date" id="oBirthDate" required onchange="calculateAge()" class="w-full px-4 py-2 border rounded-lg"></div>
                 <div><label class="block text-sm font-medium mb-1">العمر</label><input type="text" id="oAge" readonly class="w-full px-4 py-2 border rounded-lg bg-gray-100"></div>
-                <div><label class="block text-sm font-medium mb-1">حالة اليتم *</label><select id="oOrphanStatus" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر</option><option value="father">يتيم الأب</option><option value="mother">يتيم الأم</option><option value="both">يتيم الأب والأم</option></select></div>
-                <div><label class="block text-sm font-medium mb-1">المنطقة</label><input type="text" id="oDistrict" class="w-full px-4 py-2 border rounded-lg"></div>
-                <div><label class="block text-sm font-medium mb-1">حالة الكفالة *</label><select id="oSponsorship" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر</option><option value="sponsored">مكفول</option><option value="unsponsored">غير مكفول</option><option value="needs_sponsor">بحاجة إلى كفيل</option></select></div>
+                <div><label class="block text-sm font-medium mb-1">الكفالة *</label><select id="oSponsorship" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر</option><option value="sponsored">مكفول</option><option value="unsponsored">غير مكفول</option><option value="needs_sponsor">بحاجة إلى كفيل</option></select></div>
             </div>
-            <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closeModal('orphanModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">حفظ البيانات ✓</button>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeModal('orphanModal')" class="px-6 py-2 border rounded-lg">إلغاء</button>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">حفظ</button>
             </div>
         </form>
     </div>
 </div>
 
+<!-- Modal إضافة أسرة -->
 <div id="familyModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
         <div class="p-6 border-b flex justify-between items-center">
             <h2 class="text-2xl font-bold">إضافة أسرة</h2>
-            <button onclick="closeModal('familyModal')" class="text-3xl text-gray-500 hover:text-gray-700">&times;</button>
+            <button onclick="closeModal('familyModal')" class="text-3xl">&times;</button>
         </div>
         <form id="familyForm" class="p-6 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4">
                 <div><label class="block text-sm font-medium mb-1">اسم الأسرة *</label><input type="text" id="fName" required class="w-full px-4 py-2 border rounded-lg"></div>
-                <div><label class="block text-sm font-medium mb-1">رمز الأسرة</label><input type="text" id="fCode" class="w-full px-4 py-2 border rounded-lg"></div>
                 <div><label class="block text-sm font-medium mb-1">ولي الأمر</label><input type="text" id="fGuardian" class="w-full px-4 py-2 border rounded-lg"></div>
-                <div><label class="block text-sm font-medium mb-1">رقم الجوال</label><input type="text" id="fPhone" class="w-full px-4 py-2 border rounded-lg"></div>
+                <div><label class="block text-sm font-medium mb-1">الهاتف</label><input type="text" id="fPhone" class="w-full px-4 py-2 border rounded-lg"></div>
                 <div><label class="block text-sm font-medium mb-1">المنطقة</label><input type="text" id="fDistrict" class="w-full px-4 py-2 border rounded-lg"></div>
-                <div><label class="block text-sm font-medium mb-1">الحالة الاقتصادية</label><select id="fIncome" class="w-full px-4 py-2 border rounded-lg"><option value="">اختر</option><option value="good">جيدة</option><option value="medium">متوسطة</option><option value="poor">ضعيفة</option><option value="very_poor">ضعيفة جداً</option></select></div>
             </div>
-            <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closeModal('familyModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">حفظ الأسرة ✓</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="assistanceModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
-        <div class="p-6 border-b flex justify-between items-center">
-            <h2 class="text-2xl font-bold">إضافة مساعدة</h2>
-            <button onclick="closeModal('assistanceModal')" class="text-3xl text-gray-500 hover:text-gray-700">&times;</button>
-        </div>
-        <form id="assistanceForm" class="p-6 space-y-4">
-            <div><label class="block text-sm font-medium mb-1">اليتيم *</label><select id="aOrphanId" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر يتيماً</option></select></div>
-            <div><label class="block text-sm font-medium mb-1">التاريخ *</label><input type="date" id="aDate" required class="w-full px-4 py-2 border rounded-lg"></div>
-            <div><label class="block text-sm font-medium mb-1">النوع *</label><select id="aType" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر</option><option value="material">عينية</option><option value="food">غذائية</option><option value="financial">مالية</option><option value="medical">طبية</option><option value="educational">تعليمية</option><option value="housing">سكنية</option><option value="other">أخرى</option></select></div>
-            <div><label class="block text-sm font-medium mb-1">المبلغ (إن وجد)</label><input type="number" id="aAmount" class="w-full px-4 py-2 border rounded-lg"></div>
-            <div><label class="block text-sm font-medium mb-1">ملاحظات</label><textarea id="aNotes" rows="3" class="w-full px-4 py-2 border rounded-lg"></textarea></div>
             <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeModal('assistanceModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">حفظ ✓</button>
+                <button type="button" onclick="closeModal('familyModal')" class="px-6 py-2 border rounded-lg">إلغاء</button>
+                <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg">حفظ</button>
             </div>
         </form>
-    </div>
-</div>
-
-<div id="followupModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
-        <div class="p-6 border-b flex justify-between items-center">
-            <h2 class="text-2xl font-bold">إضافة متابعة</h2>
-            <button onclick="closeModal('followupModal')" class="text-3xl text-gray-500 hover:text-gray-700">&times;</button>
-        </div>
-        <form id="followupForm" class="p-6 space-y-4">
-            <div><label class="block text-sm font-medium mb-1">اليتيم *</label><select id="fuOrphanId" required class="w-full px-4 py-2 border rounded-lg"><option value="">اختر يتيماً</option></select></div>
-            <div><label class="block text-sm font-medium mb-1">تاريخ المتابعة *</label><input type="date" id="fuDate" required class="w-full px-4 py-2 border rounded-lg"></div>
-            <div><label class="block text-sm font-medium mb-1">تاريخ المتابعة القادمة</label><input type="date" id="fuNextDate" class="w-full px-4 py-2 border rounded-lg"></div>
-            <div><label class="block text-sm font-medium mb-1">الملاحظات *</label><textarea id="fuNotes" rows="3" required class="w-full px-4 py-2 border rounded-lg"></textarea></div>
-            <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeModal('followupModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">حفظ ✓</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="userModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
-        <div class="p-6 border-b flex justify-between items-center">
-            <h2 class="text-2xl font-bold">إضافة مستخدم</h2>
-            <button onclick="closeModal('userModal')" class="text-3xl text-gray-500 hover:text-gray-700">&times;</button>
-        </div>
-        <form id="userForm" class="p-6 space-y-4">
-            <div><label class="block text-sm font-medium mb-1">الاسم الكامل *</label><input type="text" id="uName" required class="w-full px-4 py-2 border rounded-lg"></div>
-            <div><label class="block text-sm font-medium mb-1">البريد الإلكتروني *</label><input type="email" id="uEmail" required class="w-full px-4 py-2 border rounded-lg"></div>
-            <div><label class="block text-sm font-medium mb-1">الدور *</label><select id="uRole" required class="w-full px-4 py-2 border rounded-lg"><option value="staff">موظف — إضافة وتعديل</option><option value="viewer">مشاهد — قراءة فقط</option><option value="admin">مدير — كل الصلاحيات</option></select></div>
-            <div><label class="block text-sm font-medium mb-1">كلمة المرور المؤقتة *</label><input type="password" id="uPassword" required minlength="6" class="w-full px-4 py-2 border rounded-lg"></div>
-            <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeModal('userModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">إنشاء المستخدم ✓</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="qrModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md text-center p-6">
-        <h2 class="text-2xl font-bold mb-4">رمز QR</h2>
-        <div id="qrCodeContainer" class="mb-4"></div>
-        <div class="flex justify-center gap-3">
-            <button onclick="downloadQR()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">تحميل PNG</button>
-            <button onclick="printQR()" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">طباعة</button>
-            <button onclick="closeModal('qrModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">إغلاق</button>
-        </div>
     </div>
 </div>
 
 <script>
-// ==================== إعدادات Supabase ====================
 const SUPABASE_URL = 'https://tqdqoszgsrrbuhdtzlet.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T'; // ⚠️ ضع مفتاحك هنا
+const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let currentUser = null;
-let allData = {
-    orphans: [],
-    families: [],
-    assistance: [],
-    followups: [],
-    logs: [],
-    users: []
-};
+let allOrphans = [];
+let allFamilies = [];
 
-// ==================== التهيئة ====================
 window.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 التطبيق يعمل - الواجهة الكاملة');
-    
-    // التحقق من الجلسة
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
         currentUser = session.user;
-        await initApp();
+        showApp();
+        await loadAllData();
     } else {
         showLoginScreen();
     }
     
-    setupEventListeners();
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+    document.getElementById('orphanForm').addEventListener('submit', handleOrphanSubmit);
+    document.getElementById('familyForm').addEventListener('submit', handleFamilySubmit);
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigateTo(item.dataset.page);
+        });
+    });
 });
 
 function showLoginScreen() {
@@ -610,58 +262,22 @@ function showLoginScreen() {
     document.getElementById('mainApp').style.display = 'none';
 }
 
-async function initApp() {
+function showApp() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('mainApp').style.display = 'flex';
-    
-    // تحديث معلومات المستخدم
-    document.getElementById('userNameDisplay').textContent = currentUser.email.split('@')[0];
-    
-    // تحميل البيانات
-    await loadAllData();
-    navigateTo('dashboard');
+    document.getElementById('userNameDisplay').textContent = currentUser.email;
 }
 
-function setupEventListeners() {
-    // تسجيل الدخول
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
-    
-    // إنشاء حساب
-    document.getElementById('registerForm').addEventListener('submit', handleRegister);
-    
-    // تسجيل الخروج
-    window.doLogout = async function() {
-        await sb.auth.signOut();
-        currentUser = null;
-        showLoginScreen();
-    };
-    
-    // التنقل
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = item.dataset.page;
-            navigateTo(page);
-        });
-    });
-    
-    // نماذج الإضافة
-    document.getElementById('orphanForm').addEventListener('submit', handleOrphanSubmit);
-    document.getElementById('familyForm').addEventListener('submit', handleFamilySubmit);
-    document.getElementById('assistanceForm').addEventListener('submit', handleAssistanceSubmit);
-    document.getElementById('followupForm').addEventListener('submit', handleFollowupSubmit);
-    document.getElementById('userForm').addEventListener('submit', handleUserSubmit);
-    document.getElementById('changePasswordForm').addEventListener('submit', handleChangePassword);
-    
-    // الفلاتر
-    document.getElementById('orphansSearch').addEventListener('input', debounce(filterOrphans, 300));
-    document.getElementById('orphansGenderFilter').addEventListener('change', filterOrphans);
-    document.getElementById('orphansStatusFilter').addEventListener('change', filterOrphans);
-    document.getElementById('orphansSponsorshipFilter').addEventListener('change', filterOrphans);
-    document.getElementById('familiesSearch').addEventListener('input', debounce(filterFamilies, 300));
+function showRegister() {
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('registerSection').classList.remove('hidden');
 }
 
-// ==================== المصادقة ====================
+function showLogin() {
+    document.getElementById('registerSection').classList.add('hidden');
+    document.getElementById('loginSection').classList.remove('hidden');
+}
+
 async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
@@ -671,10 +287,9 @@ async function handleLogin(e) {
     try {
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        
         currentUser = data.user;
-        await initApp();
-        errorDiv.style.display = 'none';
+        showApp();
+        await loadAllData();
     } catch (err) {
         errorDiv.textContent = 'خطأ: ' + err.message;
         errorDiv.style.display = 'block';
@@ -700,7 +315,6 @@ async function handleRegister(e) {
         const { data, error } = await sb.auth.signUp({ email, password });
         if (error) throw error;
         
-        // إنشاء profile
         if (data.user) {
             await sb.from('profiles').insert({
                 user_id: data.user.id,
@@ -711,13 +325,11 @@ async function handleRegister(e) {
             });
         }
         
-        successDiv.textContent = '✅ تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
+        successDiv.textContent = '✅ تم إنشاء الحساب! يمكنك الآن تسجيل الدخول.';
         successDiv.style.display = 'block';
-        errorDiv.style.display = 'none';
         
         setTimeout(() => {
-            document.getElementById('registerSection').classList.add('hidden');
-            document.getElementById('loginSection').classList.remove('hidden');
+            showLogin();
             document.getElementById('loginEmail').value = email;
         }, 2000);
     } catch (err) {
@@ -726,220 +338,91 @@ async function handleRegister(e) {
     }
 }
 
-// ==================== تحميل البيانات ====================
+async function doLogout() {
+    await sb.auth.signOut();
+    currentUser = null;
+    showLoginScreen();
+}
+
 async function loadAllData() {
-    await Promise.all([
-        loadOrphans(),
-        loadFamilies(),
-        loadAssistance(),
-        loadFollowups(),
-        loadLogs()
-    ]);
+    await loadOrphans();
+    await loadFamilies();
     updateStats();
 }
 
 async function loadOrphans() {
     const { data, error } = await sb.from('orphans').select('*').order('created_at', { ascending: false });
-    if (error) {
-        showToast('خطأ في تحميل الأيتام: ' + error.message, 'error');
-        allData.orphans = [];
-    } else {
-        allData.orphans = data || [];
-    }
+    allOrphans = error ? [] : (data || []);
     renderOrphans();
-    renderRecentOrphans();
 }
 
 async function loadFamilies() {
     const { data, error } = await sb.from('families').select('*').order('created_at', { ascending: false });
-    if (error) {
-        showToast('خطأ في تحميل الأسر: ' + error.message, 'error');
-        allData.families = [];
-    } else {
-        allData.families = data || [];
-    }
+    allFamilies = error ? [] : (data || []);
     renderFamilies();
 }
 
-async function loadAssistance() {
-    const { data, error } = await sb.from('assistance').select('*').order('date', { ascending: false });
-    allData.assistance = error ? [] : (data || []);
-    renderAssistance();
-}
-
-async function loadFollowups() {
-    const { data, error } = await sb.from('followups').select('*').order('date', { ascending: false });
-    allData.followups = error ? [] : (data || []);
-    renderFollowups();
-}
-
-async function loadLogs() {
-    const { data, error } = await sb.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(100);
-    allData.logs = error ? [] : (data || []);
-    renderLogs();
-}
-
-// ==================== العرض ====================
 function renderOrphans() {
     const tbody = document.getElementById('orphansTableBody');
-    if (allData.orphans.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-gray-500">لا توجد بيانات أيتام</td></tr>';
+    if (allOrphans.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">لا توجد بيانات</td></tr>';
         return;
     }
-    
-    tbody.innerHTML = allData.orphans.map(o => `
+    tbody.innerHTML = allOrphans.map(o => `
         <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-3">${escapeHtml(o.file_number || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(o.full_name || '-')}</td>
+            <td class="px-4 py-3">${o.file_number || '-'}</td>
+            <td class="px-4 py-3">${o.full_name || '-'}</td>
             <td class="px-4 py-3">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
             <td class="px-4 py-3">${o.birth_date ? calculateAgeFromDate(o.birth_date) : '-'}</td>
-            <td class="px-4 py-3">${getOrphanStatusText(o.orphan_status)}</td>
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">${escapeHtml(o.district || '-')}</td>
             <td class="px-4 py-3">${getSponsorshipText(o.sponsorship_status)}</td>
-            <td class="px-4 py-3">
-                <button onclick="viewQR('${o.id}')" class="text-blue-600 hover:text-blue-800 ml-2">📱</button>
-                <button onclick="deleteOrphan('${o.id}')" class="text-red-600 hover:text-red-800">حذف</button>
-            </td>
+            <td class="px-4 py-3"><button onclick="deleteOrphan('${o.id}')" class="text-red-600">حذف</button></td>
         </tr>
     `).join('');
 }
 
 function renderFamilies() {
     const tbody = document.getElementById('familiesTableBody');
-    if (allData.families.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-gray-500">لا توجد أسر مسجلة</td></tr>';
+    if (allFamilies.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">لا توجد بيانات</td></tr>';
         return;
     }
-    
-    tbody.innerHTML = allData.families.map(f => `
+    tbody.innerHTML = allFamilies.map(f => `
         <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-3">${escapeHtml(f.name || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(f.family_code || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(f.guardian || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(f.phone || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(f.district || '-')}</td>
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">${getIncomeText(f.income)}</td>
-            <td class="px-4 py-3">${f.is_displaced ? 'نازحة' : 'غير نازحة'}</td>
-            <td class="px-4 py-3">
-                <button onclick="deleteFamily('${f.id}')" class="text-red-600 hover:text-red-800">حذف</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function renderAssistance() {
-    const tbody = document.getElementById('assistanceTableBody');
-    if (allData.assistance.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">لا توجد مساعدات مسجلة</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = allData.assistance.map(a => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">${formatDate(a.date)}</td>
-            <td class="px-4 py-3">${getAssistanceTypeText(a.type)}</td>
-            <td class="px-4 py-3">${a.amount || '-'}</td>
-            <td class="px-4 py-3">${escapeHtml(a.notes || '-')}</td>
-            <td class="px-4 py-3">
-                <button onclick="deleteAssistance('${a.id}')" class="text-red-600 hover:text-red-800">حذف</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function renderFollowups() {
-    const tbody = document.getElementById('followupsTableBody');
-    if (allData.followups.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">لا توجد متابعات مسجلة</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = allData.followups.map(f => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">${formatDate(f.date)}</td>
-            <td class="px-4 py-3">${escapeHtml(f.notes || '-')}</td>
-            <td class="px-4 py-3">${formatDate(f.next_date)}</td>
-            <td class="px-4 py-3">
-                <button onclick="deleteFollowup('${f.id}')" class="text-red-600 hover:text-red-800">حذف</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function renderLogs() {
-    const tbody = document.getElementById('logsTableBody');
-    if (allData.logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">لا توجد سجلات نشاط</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = allData.logs.map(l => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-3">${formatDateTime(l.created_at)}</td>
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">${escapeHtml(l.action || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(l.entity_type || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(l.description || '-')}</td>
-        </tr>
-    `).join('');
-}
-
-function renderRecentOrphans() {
-    const tbody = document.getElementById('recentOrphansTable');
-    const recent = allData.orphans.slice(0, 5);
-    
-    if (recent.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">لا يوجد أيتام مسجلين</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = recent.map(o => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="px-4 py-3">${escapeHtml(o.file_number || '-')}</td>
-            <td class="px-4 py-3">${escapeHtml(o.full_name || '-')}</td>
-            <td class="px-4 py-3">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
-            <td class="px-4 py-3">-</td>
-            <td class="px-4 py-3">${formatDate(o.created_at)}</td>
+            <td class="px-4 py-3">${f.name || '-'}</td>
+            <td class="px-4 py-3">${f.guardian || '-'}</td>
+            <td class="px-4 py-3">${f.phone || '-'}</td>
+            <td class="px-4 py-3">${f.district || '-'}</td>
+            <td class="px-4 py-3"><button onclick="deleteFamily('${f.id}')" class="text-red-600">حذف</button></td>
         </tr>
     `).join('');
 }
 
 function updateStats() {
-    document.getElementById('statTotalOrphans').textContent = allData.orphans.length;
-    document.getElementById('statTotalFamilies').textContent = allData.families.length;
-    document.getElementById('statMaleOrphans').textContent = allData.orphans.filter(o => o.gender === 'male').length;
-    document.getElementById('statFemaleOrphans').textContent = allData.orphans.filter(o => o.gender === 'female').length;
+    document.getElementById('statOrphans').textContent = allOrphans.length;
+    document.getElementById('statFamilies').textContent = allFamilies.length;
+    document.getElementById('statMale').textContent = allOrphans.filter(o => o.gender === 'male').length;
+    document.getElementById('statFemale').textContent = allOrphans.filter(o => o.gender === 'female').length;
 }
 
-// ==================== CRUD Operations ====================
 async function handleOrphanSubmit(e) {
     e.preventDefault();
     const data = {
         file_number: document.getElementById('oFileNumber').value,
-        full_name: document.getElementById('oFullName').value,
+        full_name: document.getElementById('oName').value,
         gender: document.getElementById('oGender').value,
         birth_date: document.getElementById('oBirthDate').value,
-        orphan_status: document.getElementById('oOrphanStatus').value,
-        district: document.getElementById('oDistrict').value,
         sponsorship_status: document.getElementById('oSponsorship').value
     };
     
     try {
         const { error } = await sb.from('orphans').insert([data]);
         if (error) throw error;
-        
-        showToast('✅ تم إضافة اليتيم بنجاح', 'success');
+        showToast('✅ تم الحفظ', 'success');
         closeModal('orphanModal');
         await loadOrphans();
         updateStats();
     } catch (err) {
-        showToast('❌ فشل الحفظ: ' + err.message, 'error');
+        showToast(' فشل: ' + err.message, 'error');
     }
 }
 
@@ -947,61 +430,50 @@ async function handleFamilySubmit(e) {
     e.preventDefault();
     const data = {
         name: document.getElementById('fName').value,
-        family_code: document.getElementById('fCode').value,
         guardian: document.getElementById('fGuardian').value,
         phone: document.getElementById('fPhone').value,
-        district: document.getElementById('fDistrict').value,
-        income: document.getElementById('fIncome').value
+        district: document.getElementById('fDistrict').value
     };
     
     try {
         const { error } = await sb.from('families').insert([data]);
         if (error) throw error;
-        
-        showToast('✅ تم إضافة الأسرة بنجاح', 'success');
+        showToast('✅ تم الحفظ', 'success');
         closeModal('familyModal');
         await loadFamilies();
         updateStats();
     } catch (err) {
-        showToast('❌ فشل الحفظ: ' + err.message, 'error');
+        showToast('❌ فشل: ' + err.message, 'error');
     }
 }
 
 async function deleteOrphan(id) {
-    if (!confirm('هل أنت متأكد من حذف هذا اليتيم؟')) return;
-    
-    try {
-        const { error } = await sb.from('orphans').delete().eq('id', id);
-        if (error) throw error;
-        
+    if (!confirm('هل أنت متأكد؟')) return;
+    const { error } = await sb.from('orphans').delete().eq('id', id);
+    if (error) {
+        showToast('❌ فشل: ' + error.message, 'error');
+    } else {
         showToast('✅ تم الحذف', 'success');
         await loadOrphans();
         updateStats();
-    } catch (err) {
-        showToast('❌ فشل الحذف: ' + err.message, 'error');
     }
 }
 
 async function deleteFamily(id) {
-    if (!confirm('هل أنت متأكد من حذف هذه الأسرة؟')) return;
-    
-    try {
-        const { error } = await sb.from('families').delete().eq('id', id);
-        if (error) throw error;
-        
+    if (!confirm('هل أنت متأكد؟')) return;
+    const { error } = await sb.from('families').delete().eq('id', id);
+    if (error) {
+        showToast('❌ فشل: ' + error.message, 'error');
+    } else {
         showToast('✅ تم الحذف', 'success');
         await loadFamilies();
         updateStats();
-    } catch (err) {
-        showToast('❌ فشل الحذف: ' + err.message, 'error');
     }
 }
 
-// ==================== دوال مساعدة ====================
 function navigateTo(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    
     document.getElementById('page-' + page).classList.add('active');
     document.querySelector('.nav-item[data-page="' + page + '"]').classList.add('active');
 }
@@ -1016,21 +488,6 @@ function openFamilyModal() {
     document.getElementById('familyModal').classList.add('active');
 }
 
-function openAssistanceModal() {
-    document.getElementById('assistanceForm').reset();
-    document.getElementById('assistanceModal').classList.add('active');
-}
-
-function openFollowupModal() {
-    document.getElementById('followupForm').reset();
-    document.getElementById('followupModal').classList.add('active');
-}
-
-function openUserModal() {
-    document.getElementById('userForm').reset();
-    document.getElementById('userModal').classList.add('active');
-}
-
 function closeModal(id) {
     document.getElementById(id).classList.remove('active');
 }
@@ -1041,16 +498,11 @@ function calculateAge() {
         document.getElementById('oAge').value = '';
         return;
     }
-    
     const today = new Date();
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-        age--;
-    }
-    
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     document.getElementById('oAge').value = age + ' سنة';
 }
 
@@ -1060,15 +512,8 @@ function calculateAgeFromDate(birthDate) {
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-    }
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     return age + ' سنة';
-}
-
-function getOrphanStatusText(status) {
-    const map = { 'father': 'يتيم الأب', 'mother': 'يتيم الأم', 'both': 'يتيم الأب والأم' };
-    return map[status] || '-';
 }
 
 function getSponsorshipText(status) {
@@ -1076,229 +521,12 @@ function getSponsorshipText(status) {
     return map[status] || '-';
 }
 
-function getIncomeText(income) {
-    const map = { 'good': 'جيدة', 'medium': 'متوسطة', 'poor': 'ضعيفة', 'very_poor': 'ضعيفة جداً' };
-    return map[income] || '-';
-}
-
-function getAssistanceTypeText(type) {
-    const map = { 'material': 'عينية', 'food': 'غذائية', 'financial': 'مالية', 'medical': 'طبية', 'educational': 'تعليمية', 'housing': 'سكنية', 'other': 'أخرى' };
-    return map[type] || '-';
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('ar-EG');
-}
-
-function formatDateTime(dateStr) {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleString('ar-EG');
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
-
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        padding: 15px 25px;
-        border-radius: 8px;
-        color: white;
-        z-index: 10000;
-        background: ${type === 'error' ? '#ef4444' : '#10b981'};
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    `;
+    toast.style.cssText = `position:fixed;top:20px;left:20px;padding:15px 25px;border-radius:8px;color:white;z-index:10000;background:${type === 'error' ? '#ef4444' : '#10b981'};`;
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
-}
-
-function filterOrphans() {
-    renderOrphans();
-}
-
-function filterFamilies() {
-    renderFamilies();
-}
-
-function clearOrphansFilters() {
-    document.getElementById('orphansSearch').value = '';
-    document.getElementById('orphansGenderFilter').value = '';
-    document.getElementById('orphansStatusFilter').value = '';
-    document.getElementById('orphansSponsorshipFilter').value = '';
-    renderOrphans();
-}
-
-// Export functions
-async function exportBackup() {
-    const backup = {
-        orphans: allData.orphans,
-        families: allData.families,
-        assistance: allData.assistance,
-        followups: allData.followups,
-        exportDate: new Date().toISOString()
-    };
-    
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'backup_' + new Date().toISOString().split('T')[0] + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showToast('✅ تم تصدير البيانات', 'success');
-}
-
-async function importBackup(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        
-        if (data.orphans && data.orphans.length > 0) {
-            const { error } = await sb.from('orphans').insert(data.orphans);
-            if (error) throw error;
-        }
-        
-        showToast('✅ تم استيراد البيانات', 'success');
-        await loadAllData();
-    } catch (err) {
-        showToast('❌ فشل الاستيراد: ' + err.message, 'error');
-    }
-}
-
-async function exportAllOrphansCSV() {
-    if (allData.orphans.length === 0) {
-        showToast('لا توجد بيانات للتصدير', 'error');
-        return;
-    }
-    
-    const headers = ['رقم الملف', 'الاسم', 'الجنس', 'تاريخ الميلاد', 'العمر', 'المنطقة', 'الكفالة'];
-    const rows = allData.orphans.map(o => [
-        o.file_number || '',
-        o.full_name || '',
-        o.gender === 'male' ? 'ذكر' : 'أنثى',
-        o.birth_date || '',
-        calculateAgeFromDate(o.birth_date),
-        o.district || '',
-        getSponsorshipText(o.sponsorship_status)
-    ]);
-    
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'orphans_' + new Date().toISOString().split('T')[0] + '.csv';
-    a.click();
-    
-    showToast('✅ تم تصدير التقرير', 'success');
-}
-
-async function exportAssistanceCSV() {
-    showToast('✅ تم تصدير تقرير المساعدات', 'success');
-}
-
-async function exportOrphanReport() {
-    showToast(' قيد التطوير', 'info');
-}
-
-async function exportFamilyReport() {
-    showToast(' قيد التطوير', 'info');
-}
-
-function viewQR(orphanId) {
-    const orphan = allData.orphans.find(o => o.id === orphanId);
-    if (!orphan) return;
-    
-    const container = document.getElementById('qrCodeContainer');
-    container.innerHTML = '';
-    
-    new QRCode(container, {
-        text: orphan.file_number || orphan.id,
-        width: 200,
-        height: 200
-    });
-    
-    document.getElementById('qrModal').classList.add('active');
-}
-
-function downloadQR() {
-    const canvas = document.querySelector('#qrCodeContainer canvas');
-    if (!canvas) return;
-    
-    const link = document.createElement('a');
-    link.download = 'qr_code.png';
-    link.href = canvas.toDataURL();
-    link.click();
-}
-
-function printQR() {
-    const canvas = document.querySelector('#qrCodeContainer canvas');
-    if (!canvas) return;
-    
-    const win = window.open('', '', 'width=400,height=400');
-    win.document.write('<img src="' + canvas.toDataURL() + '">');
-    win.document.close();
-    win.print();
-}
-
-async function handleAssistanceSubmit(e) {
-    e.preventDefault();
-    showToast('🚧 قيد التطوير', 'info');
-    closeModal('assistanceModal');
-}
-
-async function handleFollowupSubmit(e) {
-    e.preventDefault();
-    showToast('🚧 قيد التطوير', 'info');
-    closeModal('followupModal');
-}
-
-async function handleUserSubmit(e) {
-    e.preventDefault();
-    showToast(' قيد التطوير - يحتاج API Server', 'info');
-    closeModal('userModal');
-}
-
-async function handleChangePassword(e) {
-    e.preventDefault();
-    const newPassword = document.getElementById('newPassword').value;
-    const confirm = document.getElementById('confirmNewPassword').value;
-    
-    if (newPassword !== confirm) {
-        showToast('كلمتا المرور غير متطابقتين', 'error');
-        return;
-    }
-    
-    try {
-        const { error } = await sb.auth.updateUser({ password: newPassword });
-        if (error) throw error;
-        
-        showToast('✅ تم تحديث كلمة المرور', 'success');
-        document.getElementById('changePasswordForm').reset();
-    } catch (err) {
-        showToast('❌ فشل التحديث: ' + err.message, 'error');
-    }
 }
 </script>
 
