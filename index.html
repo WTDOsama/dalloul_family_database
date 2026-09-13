@@ -8,7 +8,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: #f0f2f5; min-height: 100vh; }
         
-        /* شاشة تسجيل الدخول */
         .login-screen {
             min-height: 100vh;
             display: flex;
@@ -94,7 +93,6 @@
         .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
         
-        /* التطبيق الرئيسي */
         .app { display: none; min-height: 100vh; }
         .sidebar {
             width: 250px;
@@ -124,7 +122,6 @@
             padding-top: 20px;
             border-top: 1px solid #334155;
         }
-        .user-info p { margin-bottom: 5px; }
         .content {
             margin-right: 250px;
             padding: 30px;
@@ -191,16 +188,13 @@
             font-size: 12px;
             margin-left: 5px;
         }
-        .btn-edit { background: #f59e0b; color: white; }
         .btn-delete { background: #ef4444; color: white; }
-        .btn-view { background: #3b82f6; color: white; }
         .empty-state {
             text-align: center;
             padding: 40px;
             color: #9ca3af;
         }
         
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -246,7 +240,6 @@
         .modal-footer .btn { width: auto; padding: 10px 20px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        /* Toast */
         .toast {
             position: fixed;
             top: 20px;
@@ -294,7 +287,7 @@
                 <div id="loginError" class="alert alert-error"></div>
                 <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
             </form>
-            <button class="link-btn" onclick="showRegister()">ليس لديك حساب؟ إنشاء حساب جديد</button>
+            <button class="link-btn" id="showRegisterBtn">ليس لديك حساب؟ إنشاء حساب جديد</button>
         </div>
         
         <!-- نموذج إنشاء حساب -->
@@ -320,7 +313,7 @@
                 <div id="regSuccess" class="alert alert-success"></div>
                 <button type="submit" class="btn btn-success">إنشاء الحساب</button>
             </form>
-            <button class="link-btn" onclick="showLogin()">العودة لتسجيل الدخول</button>
+            <button class="link-btn" id="showLoginBtn">العودة لتسجيل الدخول</button>
         </div>
     </div>
 </div>
@@ -331,19 +324,18 @@
         <h2>عائلة دلول</h2>
         <p>نظام إدارة الأيتام</p>
         <nav>
-            <a href="#" class="nav-item active" onclick="showPage('dashboard')">🏠 الرئيسية</a>
-            <a href="#" class="nav-item" onclick="showPage('orphans')">👶 الأيتام</a>
-            <a href="#" class="nav-item" onclick="showPage('families')">👨‍👩‍👧‍👦 الأسر</a>
+            <a href="#" class="nav-item active" onclick="showPage('dashboard', event)">🏠 الرئيسية</a>
+            <a href="#" class="nav-item" onclick="showPage('orphans', event)">👶 الأيتام</a>
+            <a href="#" class="nav-item" onclick="showPage('families', event)">👨‍👩‍‍👦 الأسر</a>
         </nav>
         <div class="user-info">
             <p style="font-size:12px; color:#94a3b8;">المستخدم</p>
             <p id="userEmail" style="font-size:13px; word-break:break-all;">-</p>
-            <button class="btn btn-danger" style="margin-top:15px; padding:10px;" onclick="logout()">خروج</button>
+            <button class="btn btn-danger" style="margin-top:15px; padding:10px;" onclick="doLogout()">خروج</button>
         </div>
     </aside>
     
     <main class="content">
-        <!-- الصفحة الرئيسية -->
         <div id="page-dashboard">
             <div class="header">
                 <h1>الرئيسية</h1>
@@ -368,7 +360,6 @@
             </div>
         </div>
         
-        <!-- صفحة الأيتام -->
         <div id="page-orphans" style="display:none;">
             <div class="header">
                 <h1>الأيتام</h1>
@@ -394,7 +385,6 @@
             </div>
         </div>
         
-        <!-- صفحة الأسر -->
         <div id="page-families" style="display:none;">
             <div class="header">
                 <h1>الأسر</h1>
@@ -472,10 +462,6 @@
                         <label>المنطقة</label>
                         <input type="text" id="oDistrict">
                     </div>
-                    <div class="form-group">
-                        <label>رقم الأسرة</label>
-                        <input type="text" id="oFamilyId">
-                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -512,24 +498,6 @@
                         <label>المنطقة</label>
                         <input type="text" id="fDistrict">
                     </div>
-                    <div class="form-group">
-                        <label>العنوان</label>
-                        <input type="text" id="fAddress">
-                    </div>
-                    <div class="form-group">
-                        <label>الحالة الاقتصادية</label>
-                        <select id="fIncome">
-                            <option value="">اختر</option>
-                            <option value="good">جيدة</option>
-                            <option value="medium">متوسطة</option>
-                            <option value="poor">ضعيفة</option>
-                            <option value="very_poor">ضعيفة جداً</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>ملاحظات</label>
-                    <textarea id="fNotes" rows="3"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -544,371 +512,391 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ==================== إعدادات Supabase ====================
-// ⚠️ هام: استبدل هذه القيم بمفاتيحك الحقيقية من Supabase
-const SUPABASE_URL = 'https://tqdqoszgsrrbuhdtzlet.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T'; // ⚠️ ضع مفتاحك هنا
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-let currentUser = null;
-let allOrphans = [];
-let allFamilies = [];
-
-// ==================== التهيئة ====================
-window.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 التطبيق يعمل');
+(function() {
+    'use strict';
     
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-        currentUser = session.user;
-        showApp();
-        await loadAllData();
-    } else {
-        showLoginScreen();
-    }
-});
-
-// ==================== التبديل بين الشاشات ====================
-function showLoginScreen() {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('mainApp').style.display = 'none';
-}
-
-function showApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'flex';
-    document.getElementById('userEmail').textContent = currentUser.email;
-}
-
-function showRegister() {
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('registerSection').style.display = 'block';
-}
-
-function showLogin() {
-    document.getElementById('registerSection').style.display = 'none';
-    document.getElementById('loginSection').style.display = 'block';
-}
-
-// ==================== تسجيل الدخول ====================
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorDiv = document.getElementById('loginError');
+    // ==================== إعدادات Supabase ====================
+    const SUPABASE_URL = 'https://tqdqoszgsrrbuhdtzlet.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T';
     
-    try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    let currentUser = null;
+    let allOrphans = [];
+    let allFamilies = [];
+    
+    // ==================== التهيئة ====================
+    window.addEventListener('DOMContentLoaded', async () => {
+        console.log('🚀 التطبيق يعمل');
         
-        if (error) {
-            errorDiv.textContent = '❌ ' + error.message;
-            errorDiv.style.display = 'block';
-        } else {
-            currentUser = data.user;
-            showApp();
-            await loadAllData();
-        }
-    } catch (err) {
-        errorDiv.textContent = '❌ خطأ في الاتصال';
-        errorDiv.style.display = 'block';
-    }
-});
-
-// ==================== إنشاء حساب ====================
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('regEmail').value;
-    const name = document.getElementById('regName').value;
-    const password = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regConfirm').value;
-    const errorDiv = document.getElementById('regError');
-    const successDiv = document.getElementById('regSuccess');
-    
-    if (password !== confirm) {
-        errorDiv.textContent = '❌ كلمة المرور غير متطابقة';
-        errorDiv.style.display = 'block';
-        return;
-    }
-    
-    try {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: { full_name: name }
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                showApp();
+                await loadAllData();
+            } else {
+                showLoginScreen();
             }
-        });
+        } catch (err) {
+            console.error('خطأ في التهيئة:', err);
+            showLoginScreen();
+        }
+    });
+    
+    // ==================== التبديل بين الشاشات ====================
+    function showLoginScreen() {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+    
+    function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'flex';
+        document.getElementById('userEmail').textContent = currentUser ? currentUser.email : '-';
+    }
+    
+    // ==================== دوال إنشاء الحساب وتسجيل الدخول ====================
+    function showRegister() {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('registerSection').style.display = 'block';
+    }
+    
+    function showLogin() {
+        document.getElementById('registerSection').style.display = 'none';
+        document.getElementById('loginSection').style.display = 'block';
+    }
+    
+    // ربط الأزرار
+    document.getElementById('showRegisterBtn').addEventListener('click', showRegister);
+    document.getElementById('showLoginBtn').addEventListener('click', showLogin);
+    
+    // ==================== تسجيل الدخول ====================
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const errorDiv = document.getElementById('loginError');
         
-        if (error) {
-            errorDiv.textContent = '❌ ' + error.message;
+        try {
+            const { data, error } = await sb.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                errorDiv.textContent = '❌ ' + error.message;
+                errorDiv.style.display = 'block';
+            } else {
+                currentUser = data.user;
+                showApp();
+                await loadAllData();
+            }
+        } catch (err) {
+            errorDiv.textContent = '❌ خطأ في الاتصال: ' + err.message;
             errorDiv.style.display = 'block';
-            successDiv.style.display = 'none';
-        } else {
-            // إنشاء ملف المستخدم
-            if (data.user) {
-                try {
-                    await supabase.from('profiles').insert({
-                        user_id: data.user.id,
-                        full_name: name,
-                        username: email,
-                        role: 'admin',
-                        is_active: true
-                    });
-                } catch (err) {
-                    console.log('تعذر إنشاء profile - قد يكون RLS مفعلاً');
+        }
+    });
+    
+    // ==================== إنشاء حساب ====================
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('regEmail').value;
+        const name = document.getElementById('regName').value;
+        const password = document.getElementById('regPassword').value;
+        const confirm = document.getElementById('regConfirm').value;
+        const errorDiv = document.getElementById('regError');
+        const successDiv = document.getElementById('regSuccess');
+        
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+        
+        if (password !== confirm) {
+            errorDiv.textContent = '❌ كلمة المرور غير متطابقة';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        if (password.length < 6) {
+            errorDiv.textContent = '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        try {
+            const { data, error } = await sb.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { full_name: name }
                 }
+            });
+            
+            if (error) {
+                errorDiv.textContent = '❌ ' + error.message;
+                errorDiv.style.display = 'block';
+            } else {
+                // إنشاء ملف المستخدم
+                if (data.user) {
+                    try {
+                        const { error: profileError } = await sb.from('profiles').insert({
+                            user_id: data.user.id,
+                            full_name: name,
+                            username: email,
+                            role: 'admin',
+                            is_active: true
+                        });
+                        if (profileError) {
+                            console.log('تعذر إنشاء profile:', profileError.message);
+                        }
+                    } catch (err) {
+                        console.log('خطأ في إنشاء profile:', err);
+                    }
+                }
+                
+                successDiv.textContent = '✅ تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
+                successDiv.style.display = 'block';
+                
+                setTimeout(() => {
+                    showLogin();
+                    document.getElementById('loginEmail').value = email;
+                }, 2000);
             }
-            
-            successDiv.textContent = '✅ تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
-            successDiv.style.display = 'block';
-            errorDiv.style.display = 'none';
-            
-            setTimeout(() => {
-                showLogin();
-                document.getElementById('loginEmail').value = email;
-            }, 2000);
+        } catch (err) {
+            errorDiv.textContent = '❌ خطأ في الاتصال: ' + err.message;
+            errorDiv.style.display = 'block';
         }
-    } catch (err) {
-        errorDiv.textContent = '❌ خطأ في الاتصال';
-        errorDiv.style.display = 'block';
-    }
-});
-
-// ==================== تسجيل الخروج ====================
-async function logout() {
-    await supabase.auth.signOut();
-    currentUser = null;
-    showLoginScreen();
-}
-
-// ==================== تحميل البيانات ====================
-async function loadAllData() {
-    await loadFamilies();
-    await loadOrphans();
-    updateStats();
-}
-
-async function loadFamilies() {
-    try {
-        const { data, error } = await supabase
-            .from('families')
-            .select('*')
-            .order('created_at', { ascending: false });
-        
-        if (error) {
-            console.error('خطأ في تحميل الأسر:', error);
-            showToast('خطأ في تحميل الأسر: ' + error.message, 'error');
-            allFamilies = [];
-            return;
-        }
-        allFamilies = data || [];
-        renderFamilies();
-    } catch (err) {
-        console.error('خطأ:', err);
-    }
-}
-
-async function loadOrphans() {
-    try {
-        const { data, error } = await supabase
-            .from('orphans')
-            .select('*, families(name)')
-            .order('created_at', { ascending: false });
-        
-        if (error) {
-            console.error('خطأ في تحميل الأيتام:', error);
-            showToast('خطأ في تحميل الأيتام: ' + error.message, 'error');
-            allOrphans = [];
-            return;
-        }
-        allOrphans = data || [];
-        renderOrphans();
-    } catch (err) {
-        console.error('خطأ:', err);
-    }
-}
-
-function renderFamilies() {
-    const tbody = document.getElementById('familiesTable');
-    if (allFamilies.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد أسر مسجلة</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allFamilies.map(f => `
-        <tr>
-            <td>${escapeHtml(f.name)}</td>
-            <td>${escapeHtml(f.guardian || '-')}</td>
-            <td>${escapeHtml(f.phone || '-')}</td>
-            <td>${escapeHtml(f.district || '-')}</td>
-            <td>
-                <button class="action-btn btn-delete" onclick="deleteFamily('${f.id}')">حذف</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function renderOrphans() {
-    const tbody = document.getElementById('orphansTable');
-    if (allOrphans.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">لا توجد بيانات أيتام</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allOrphans.map(o => `
-        <tr>
-            <td>${escapeHtml(o.file_number || o.orphan_code || '-')}</td>
-            <td>${escapeHtml(o.full_name || o.name || '-')}</td>
-            <td>${o.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
-            <td>${o.birth_date ? calculateAge(o.birth_date) : '-'}</td>
-            <td>${o.families?.name || '-'}</td>
-            <td>${getSponsorshipText(o.sponsorship_status || o.status)}</td>
-            <td>
-                <button class="action-btn btn-delete" onclick="deleteOrphan('${o.id}')">حذف</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function updateStats() {
-    document.getElementById('statOrphans').textContent = allOrphans.length;
-    document.getElementById('statFamilies').textContent = allFamilies.length;
-    document.getElementById('statMale').textContent = allOrphans.filter(o => o.gender === 'male').length;
-    document.getElementById('statFemale').textContent = allOrphans.filter(o => o.gender === 'female').length;
-}
-
-// ==================== إضافة أسرة ====================
-document.getElementById('familyForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    });
     
-    const data = {
-        name: document.getElementById('fName').value,
-        guardian: document.getElementById('fGuardian').value,
-        phone: document.getElementById('fPhone').value,
-        district: document.getElementById('fDistrict').value,
-        address: document.getElementById('fAddress').value,
-        income: document.getElementById('fIncome').value,
-        notes: document.getElementById('fNotes').value
+    // ==================== تسجيل الخروج ====================
+    window.doLogout = async function() {
+        await sb.auth.signOut();
+        currentUser = null;
+        showLoginScreen();
     };
     
-    try {
-        const { error } = await supabase.from('families').insert([data]);
-        
-        if (error) {
-            showToast(' فشل الحفظ: ' + error.message, 'error');
-        } else {
-            showToast('✅ تم إضافة الأسرة بنجاح', 'success');
-            closeModal('familyModal');
-            document.getElementById('familyForm').reset();
-            await loadFamilies();
-            updateStats();
-        }
-    } catch (err) {
-        showToast(' خطأ: ' + err.message, 'error');
-    }
-});
-
-// ==================== إضافة يتيم ====================
-document.getElementById('orphanForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const data = {
-        file_number: document.getElementById('oFileNumber').value,
-        full_name: document.getElementById('oName').value,
-        gender: document.getElementById('oGender').value,
-        birth_date: document.getElementById('oBirthDate').value,
-        orphan_status: document.getElementById('oStatus').value,
-        sponsorship_status: document.getElementById('oSponsorship').value,
-        district: document.getElementById('oDistrict').value,
-        family_id: document.getElementById('oFamilyId').value || null
-    };
-    
-    try {
-        const { error } = await supabase.from('orphans').insert([data]);
-        
-        if (error) {
-            showToast('❌ فشل الحفظ: ' + error.message, 'error');
-        } else {
-            showToast('✅ تم إضافة اليتيم بنجاح', 'success');
-            closeModal('orphanModal');
-            document.getElementById('orphanForm').reset();
-            await loadOrphans();
-            updateStats();
-        }
-    } catch (err) {
-        showToast('❌ خطأ: ' + err.message, 'error');
-    }
-});
-
-// ==================== الحذف ====================
-window.deleteFamily = async (id) => {
-    if (!confirm('هل أنت متأكد من حذف هذه الأسرة؟')) return;
-    const { error } = await supabase.from('families').delete().eq('id', id);
-    if (error) {
-        showToast('❌ فشل الحذف: ' + error.message, 'error');
-    } else {
-        showToast('✅ تم الحذف', 'success');
+    // ==================== تحميل البيانات ====================
+    async function loadAllData() {
         await loadFamilies();
-        updateStats();
-    }
-};
-
-window.deleteOrphan = async (id) => {
-    if (!confirm('هل أنت متأكد من حذف هذا اليتيم؟')) return;
-    const { error } = await supabase.from('orphans').delete().eq('id', id);
-    if (error) {
-        showToast('❌ فشل الحذف: ' + error.message, 'error');
-    } else {
-        showToast('✅ تم الحذف', 'success');
         await loadOrphans();
         updateStats();
     }
-};
-
-// ==================== التنقل بين الصفحات ====================
-function showPage(page) {
-    document.getElementById('page-dashboard').style.display = 'none';
-    document.getElementById('page-orphans').style.display = 'none';
-    document.getElementById('page-families').style.display = 'none';
-    document.getElementById('page-' + page).style.display = 'block';
     
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    event.target.classList.add('active');
-}
-
-// ==================== Modal ====================
-function openModal(id) {
-    document.getElementById(id).classList.add('active');
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.remove('active');
-}
-
-// ==================== دوال مساعدة ====================
-function calculateAge(birthDate) {
-    const diff = Date.now() - new Date(birthDate).getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) + ' سنة';
-}
-
-function getSponsorshipText(status) {
-    const map = { 'sponsored': 'مكفول', 'unsponsored': 'غير مكفول', 'needs_sponsor': 'بحاجة إلى كفيل' };
-    return map[status] || status || '-';
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = 'toast ' + type;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
+    async function loadFamilies() {
+        try {
+            const { data, error } = await sb
+                .from('families')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error('خطأ في تحميل الأسر:', error);
+                showToast('خطأ في تحميل الأسر: ' + error.message, 'error');
+                allFamilies = [];
+                return;
+            }
+            allFamilies = data || [];
+            renderFamilies();
+        } catch (err) {
+            console.error('خطأ:', err);
+        }
+    }
+    
+    async function loadOrphans() {
+        try {
+            const { data, error } = await sb
+                .from('orphans')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error('خطأ في تحميل الأيتام:', error);
+                showToast('خطأ في تحميل الأيتام: ' + error.message, 'error');
+                allOrphans = [];
+                return;
+            }
+            allOrphans = data || [];
+            renderOrphans();
+        } catch (err) {
+            console.error('خطأ:', err);
+        }
+    }
+    
+    function renderFamilies() {
+        const tbody = document.getElementById('familiesTable');
+        if (allFamilies.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد أسر مسجلة</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allFamilies.map(f => `
+            <tr>
+                <td>${escapeHtml(f.name)}</td>
+                <td>${escapeHtml(f.guardian || '-')}</td>
+                <td>${escapeHtml(f.phone || '-')}</td>
+                <td>${escapeHtml(f.district || '-')}</td>
+                <td>
+                    <button class="action-btn btn-delete" onclick="deleteFamily('${f.id}')">حذف</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    function renderOrphans() {
+        const tbody = document.getElementById('orphansTable');
+        if (allOrphans.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">لا توجد بيانات أيتام</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allOrphans.map(o => `
+            <tr>
+                <td>${escapeHtml(o.file_number || '-')}</td>
+                <td>${escapeHtml(o.full_name || '-')}</td>
+                <td>${o.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
+                <td>${o.birth_date ? calculateAge(o.birth_date) : '-'}</td>
+                <td>-</td>
+                <td>${getSponsorshipText(o.sponsorship_status)}</td>
+                <td>
+                    <button class="action-btn btn-delete" onclick="deleteOrphan('${o.id}')">حذف</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    function updateStats() {
+        document.getElementById('statOrphans').textContent = allOrphans.length;
+        document.getElementById('statFamilies').textContent = allFamilies.length;
+        document.getElementById('statMale').textContent = allOrphans.filter(o => o.gender === 'male').length;
+        document.getElementById('statFemale').textContent = allOrphans.filter(o => o.gender === 'female').length;
+    }
+    
+    // ==================== إضافة أسرة ====================
+    document.getElementById('familyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            name: document.getElementById('fName').value,
+            guardian: document.getElementById('fGuardian').value,
+            phone: document.getElementById('fPhone').value,
+            district: document.getElementById('fDistrict').value
+        };
+        
+        try {
+            const { error } = await sb.from('families').insert([data]);
+            
+            if (error) {
+                showToast('❌ فشل الحفظ: ' + error.message, 'error');
+            } else {
+                showToast('✅ تم إضافة الأسرة بنجاح', 'success');
+                closeModal('familyModal');
+                document.getElementById('familyForm').reset();
+                await loadFamilies();
+                updateStats();
+            }
+        } catch (err) {
+            showToast('❌ خطأ: ' + err.message, 'error');
+        }
+    });
+    
+    // ==================== إضافة يتيم ====================
+    document.getElementById('orphanForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            file_number: document.getElementById('oFileNumber').value,
+            full_name: document.getElementById('oName').value,
+            gender: document.getElementById('oGender').value,
+            birth_date: document.getElementById('oBirthDate').value,
+            orphan_status: document.getElementById('oStatus').value,
+            sponsorship_status: document.getElementById('oSponsorship').value,
+            district: document.getElementById('oDistrict').value
+        };
+        
+        try {
+            const { error } = await sb.from('orphans').insert([data]);
+            
+            if (error) {
+                showToast('❌ فشل الحفظ: ' + error.message, 'error');
+            } else {
+                showToast('✅ تم إضافة اليتيم بنجاح', 'success');
+                closeModal('orphanModal');
+                document.getElementById('orphanForm').reset();
+                await loadOrphans();
+                updateStats();
+            }
+        } catch (err) {
+            showToast('❌ خطأ: ' + err.message, 'error');
+        }
+    });
+    
+    // ==================== الحذف ====================
+    window.deleteFamily = async function(id) {
+        if (!confirm('هل أنت متأكد من حذف هذه الأسرة؟')) return;
+        const { error } = await sb.from('families').delete().eq('id', id);
+        if (error) {
+            showToast('❌ فشل الحذف: ' + error.message, 'error');
+        } else {
+            showToast('✅ تم الحذف', 'success');
+            await loadFamilies();
+            updateStats();
+        }
+    };
+    
+    window.deleteOrphan = async function(id) {
+        if (!confirm('هل أنت متأكد من حذف هذا اليتيم؟')) return;
+        const { error } = await sb.from('orphans').delete().eq('id', id);
+        if (error) {
+            showToast('❌ فشل الحذف: ' + error.message, 'error');
+        } else {
+            showToast('✅ تم الحذف', 'success');
+            await loadOrphans();
+            updateStats();
+        }
+    };
+    
+    // ==================== التنقل بين الصفحات ====================
+    window.showPage = function(page, event) {
+        if (event) event.preventDefault();
+        document.getElementById('page-dashboard').style.display = 'none';
+        document.getElementById('page-orphans').style.display = 'none';
+        document.getElementById('page-families').style.display = 'none';
+        document.getElementById('page-' + page).style.display = 'block';
+        
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if (event && event.target) event.target.classList.add('active');
+    };
+    
+    // ==================== Modal ====================
+    window.openModal = function(id) {
+        document.getElementById(id).classList.add('active');
+    };
+    
+    window.closeModal = function(id) {
+        document.getElementById(id).classList.remove('active');
+    };
+    
+    // ==================== دوال مساعدة ====================
+    function calculateAge(birthDate) {
+        const diff = Date.now() - new Date(birthDate).getTime();
+        return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) + ' سنة';
+    }
+    
+    function getSponsorshipText(status) {
+        const map = { 'sponsored': 'مكفول', 'unsponsored': 'غير مكفول', 'needs_sponsor': 'بحاجة إلى كفيل' };
+        return map[status] || status || '-';
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+})();
 </script>
 
 </body>
