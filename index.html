@@ -4,13 +4,548 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قاعدة بيانات أيتام عائلة دلول</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f0f2f5; min-height: 100vh; }
+        
+        /* شاشة تسجيل الدخول */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 20px;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 420px;
+        }
+        .login-box h1 {
+            color: #1e3a8a;
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+        .login-box .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #3b82f6;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .link-btn {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        
+        /* التطبيق الرئيسي */
+        .app { display: none; min-height: 100vh; }
+        .sidebar {
+            width: 250px;
+            background: #1e293b;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            right: 0;
+            top: 0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .sidebar h2 { font-size: 20px; margin-bottom: 5px; }
+        .sidebar p { font-size: 12px; color: #94a3b8; margin-bottom: 30px; }
+        .nav-item {
+            display: block;
+            padding: 12px 15px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        .nav-item:hover, .nav-item.active { background: #3b82f6; color: white; }
+        .user-info {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+        .user-info p { margin-bottom: 5px; }
+        .content {
+            margin-right: 250px;
+            padding: 30px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #1e293b; font-size: 28px; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-right: 4px solid #3b82f6;
+        }
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .stat-card .label {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h3 { color: #1e293b; font-size: 18px; }
+        .card-body { padding: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th { background: #f9fafb; font-weight: 600; color: #374151; }
+        tr:hover { background: #f9fafb; }
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .btn-edit { background: #f59e0b; color: white; }
+        .btn-delete { background: #ef4444; color: white; }
+        .btn-view { background: #3b82f6; color: white; }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 { color: #1e293b; }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .modal-body { padding: 20px; }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+        .modal-footer .btn { width: auto; padding: 10px 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; position: relative; height: auto; }
+            .content { margin-right: 0; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body>
+
+<!-- شاشة تسجيل الدخول -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <h1>قاعدة بيانات أيتام عائلة دلول</h1>
+        <p class="subtitle">نظام إدارة بيانات الأيتام والأسر</p>
+        
+        <!-- نموذج تسجيل الدخول -->
+        <div id="loginSection">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div id="loginError" class="alert alert-error"></div>
+                <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+            </form>
+            <button class="link-btn" onclick="showRegister()">ليس لديك حساب؟ إنشاء حساب جديد</button>
+        </div>
+        
+        <!-- نموذج إنشاء حساب -->
+        <div id="registerSection" style="display:none;">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="regName" required>
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور (6 أحرف على الأقل)</label>
+                    <input type="password" id="regPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>تأكيد كلمة المرور</label>
+                    <input type="password" id="regConfirm" required minlength="6">
+                </div>
+                <div id="regError" class="alert alert-error"></div>
+                <div id="regSuccess" class="alert alert-success"></div>
+                <button type="submit" class="btn btn-success">إنشاء الحساب</button>
+            </form>
+            <button class="link-btn" onclick="showLogin()">العودة لتسجيل الدخول</button>
+        </div>
+    </div>
+</div>
+
+<!-- التطبيق الرئيسي -->
+<div id="mainApp" class="app">
+    <aside class="sidebar">
+        <h2>عائلة دلول</h2>
+        <p>نظام إدارة الأيتام</p>
+        <nav>
+            <a href="#" class="nav-item active" onclick="showPage('dashboard')">🏠 الرئيسية</a>
+            <a href="#" class="nav-item" onclick="showPage('orphans')">👶 الأيتام</a>
+            <a href="#" class="nav-item" onclick="showPage('families')">👨‍👩‍👧‍👦 الأسر</a>
+        </nav>
+        <div class="user-info">
+            <p style="font-size:12px; color:#94a3b8;">المستخدم</p>
+            <p id="userEmail" style="font-size:13px; word-break:break-all;">-</p>
+            <button class="btn btn-danger" style="margin-top:15px; padding:10px;" onclick="logout()">خروج</button>
+        </div>
+    </aside>
+    
+    <main class="content">
+        <!-- الصفحة الرئيسية -->
+        <div id="page-dashboard">
+            <div class="header">
+                <h1>الرئيسية</h1>
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number" id="statOrphans">0</div>
+                    <div class="label">إجمالي الأيتام</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="statFamilies">0</div>
+                    <div class="label">إجمالي الأسر</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="statMale">0</div>
+                    <div class="label">ذكور</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="statFemale">0</div>
+                    <div class="label">إناث</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- صفحة الأيتام -->
+        <div id="page-orphans" style="display:none;">
+            <div class="header">
+                <h1>الأيتام</h1>
+                <button class="btn btn-primary" style="width:auto; padding:10px 20px;" onclick="openModal('orphanModal')">+ إضافة يتيم</button>
+            </div>
+            <div class="card">
+                <div class="card-body" style="padding:0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الملف</th>
+                                <th>الاسم</th>
+                                <th>الجنس</th>
+                                <th>العمر</th>
+                                <th>الأسرة</th>
+                                <th>الكفالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orphansTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- صفحة الأسر -->
+        <div id="page-families" style="display:none;">
+            <div class="header">
+                <h1>الأسر</h1>
+                <button class="btn btn-primary" style="width:auto; padding:10px 20px;" onclick="openModal('familyModal')">+ إضافة أسرة</button>
+            </div>
+            <div class="card">
+                <div class="card-body" style="padding:0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>ولي الأمر</th>
+                                <th>الهاتف</th>
+                                <th>المنطقة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="familiesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal إضافة يتيم -->
+<div id="orphanModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>إضافة يتيم جديد</h3>
+            <button class="close-btn" onclick="closeModal('orphanModal')">&times;</button>
+        </div>
+        <form id="orphanForm">
+            <div class="modal-body">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>رقم الملف *</label>
+                        <input type="text" id="oFileNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الاسم الرباعي *</label>
+                        <input type="text" id="oName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الجنس *</label>
+                        <select id="oGender" required>
+                            <option value="">اختر</option>
+                            <option value="male">ذكر</option>
+                            <option value="female">أنثى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ الميلاد *</label>
+                        <input type="date" id="oBirthDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>حالة اليتم *</label>
+                        <select id="oStatus" required>
+                            <option value="">اختر</option>
+                            <option value="father">يتيم الأب</option>
+                            <option value="mother">يتيم الأم</option>
+                            <option value="both">يتيم الأب والأم</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكفالة *</label>
+                        <select id="oSponsorship" required>
+                            <option value="">اختر</option>
+                            <option value="sponsored">مكفول</option>
+                            <option value="unsponsored">غير مكفول</option>
+                            <option value="needs_sponsor">بحاجة إلى كفيل</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة</label>
+                        <input type="text" id="oDistrict">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الأسرة</label>
+                        <input type="text" id="oFamilyId">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('orphanModal')">إلغاء</button>
+                <button type="submit" class="btn btn-primary">حفظ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal إضافة أسرة -->
+<div id="familyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>إضافة أسرة جديدة</h3>
+            <button class="close-btn" onclick="closeModal('familyModal')">&times;</button>
+        </div>
+        <form id="familyForm">
+            <div class="modal-body">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>اسم الأسرة *</label>
+                        <input type="text" id="fName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ولي الأمر</label>
+                        <input type="text" id="fGuardian">
+                    </div>
+                    <div class="form-group">
+                        <label>الهاتف</label>
+                        <input type="text" id="fPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة</label>
+                        <input type="text" id="fDistrict">
+                    </div>
+                    <div class="form-group">
+                        <label>العنوان</label>
+                        <input type="text" id="fAddress">
+                    </div>
+                    <div class="form-group">
+                        <label>الحالة الاقتصادية</label>
+                        <select id="fIncome">
+                            <option value="">اختر</option>
+                            <option value="good">جيدة</option>
+                            <option value="medium">متوسطة</option>
+                            <option value="poor">ضعيفة</option>
+                            <option value="very_poor">ضعيفة جداً</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <textarea id="fNotes" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('familyModal')">إلغاء</button>
+                <button type="submit" class="btn btn-primary">حفظ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 // ==================== إعدادات Supabase ====================
+// ⚠️ هام: استبدل هذه القيم بمفاتيحك الحقيقية من Supabase
 const SUPABASE_URL = 'https://tqdqoszgsrrbuhdtzlet.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T'; // ⚠️ ضع مفتاحك هنا
 
@@ -21,26 +556,39 @@ let allOrphans = [];
 let allFamilies = [];
 
 // ==================== التهيئة ====================
-document.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 التطبيق يعمل');
+    
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
         currentUser = session.user;
-        showMainApp();
+        showApp();
         await loadAllData();
     } else {
         showLoginScreen();
     }
 });
 
+// ==================== التبديل بين الشاشات ====================
 function showLoginScreen() {
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('mainApp').classList.add('hidden');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
 }
 
-function showMainApp() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('mainApp').classList.remove('hidden');
-    document.getElementById('userNameDisplay').textContent = currentUser.email;
+function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+    document.getElementById('userEmail').textContent = currentUser.email;
+}
+
+function showRegister() {
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('registerSection').style.display = 'block';
+}
+
+function showLogin() {
+    document.getElementById('registerSection').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'block';
 }
 
 // ==================== تسجيل الدخول ====================
@@ -49,94 +597,90 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     const errorDiv = document.getElementById('loginError');
-
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     
-    if (error) {
-        errorDiv.textContent = 'خطأ: ' + error.message;
-        errorDiv.classList.remove('hidden');
-    } else {
-        currentUser = data.user;
-        showMainApp();
-        await loadAllData();
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        
+        if (error) {
+            errorDiv.textContent = '❌ ' + error.message;
+            errorDiv.style.display = 'block';
+        } else {
+            currentUser = data.user;
+            showApp();
+            await loadAllData();
+        }
+    } catch (err) {
+        errorDiv.textContent = '❌ خطأ في الاتصال';
+        errorDiv.style.display = 'block';
     }
 });
 
-// ==================== إنشاء حساب جديد ====================
+// ==================== إنشاء حساب ====================
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('registerConfirmPassword').value;
-    const errorDiv = document.getElementById('registerError');
-    const successDiv = document.getElementById('registerSuccess');
-
-    if (password !== confirmPassword) {
-        errorDiv.textContent = 'كلمتا المرور غير متطابقتين';
-        errorDiv.classList.remove('hidden');
-        return;
-    }
-
-    if (password.length < 6) {
-        errorDiv.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-        errorDiv.classList.remove('hidden');
-        return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({ 
-        email, 
-        password,
-        options: {
-            emailRedirectTo: window.location.origin
-        }
-    });
+    const email = document.getElementById('regEmail').value;
+    const name = document.getElementById('regName').value;
+    const password = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regConfirm').value;
+    const errorDiv = document.getElementById('regError');
+    const successDiv = document.getElementById('regSuccess');
     
-    if (error) {
-        errorDiv.textContent = 'خطأ: ' + error.message;
-        errorDiv.classList.remove('hidden');
-        successDiv.classList.add('hidden');
-    } else {
-        // إنشاء ملف المستخدم في جدول profiles
-        if (data.user) {
-            await supabase.from('profiles').insert({
-                user_id: data.user.id,
-                full_name: email.split('@')[0],
-                username: email,
-                role: 'admin',
-                is_active: true
-            });
-        }
-        
-        successDiv.textContent = 'تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
-        successDiv.classList.remove('hidden');
-        errorDiv.classList.add('hidden');
-        document.getElementById('registerForm').reset();
-        
-        // العودة لشاشة تسجيل الدخول بعد 3 ثواني
-        setTimeout(() => {
-            document.getElementById('registerSection').classList.add('hidden');
-            document.getElementById('loginSection').classList.remove('hidden');
-        }, 3000);
+    if (password !== confirm) {
+        errorDiv.textContent = '❌ كلمة المرور غير متطابقة';
+        errorDiv.style.display = 'block';
+        return;
     }
-});
-
-// ==================== تبديل بين تسجيل الدخول وإنشاء حساب ====================
-document.getElementById('showRegisterBtn').addEventListener('click', () => {
-    document.getElementById('loginSection').classList.add('hidden');
-    document.getElementById('registerSection').classList.remove('hidden');
-});
-
-document.getElementById('showLoginBtn').addEventListener('click', () => {
-    document.getElementById('registerSection').classList.add('hidden');
-    document.getElementById('loginSection').classList.remove('hidden');
+    
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { full_name: name }
+            }
+        });
+        
+        if (error) {
+            errorDiv.textContent = '❌ ' + error.message;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+        } else {
+            // إنشاء ملف المستخدم
+            if (data.user) {
+                try {
+                    await supabase.from('profiles').insert({
+                        user_id: data.user.id,
+                        full_name: name,
+                        username: email,
+                        role: 'admin',
+                        is_active: true
+                    });
+                } catch (err) {
+                    console.log('تعذر إنشاء profile - قد يكون RLS مفعلاً');
+                }
+            }
+            
+            successDiv.textContent = '✅ تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
+            successDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+            
+            setTimeout(() => {
+                showLogin();
+                document.getElementById('loginEmail').value = email;
+            }, 2000);
+        }
+    } catch (err) {
+        errorDiv.textContent = '❌ خطأ في الاتصال';
+        errorDiv.style.display = 'block';
+    }
 });
 
 // ==================== تسجيل الخروج ====================
-document.getElementById('logoutBtn').addEventListener('click', async () => {
+async function logout() {
     await supabase.auth.signOut();
     currentUser = null;
     showLoginScreen();
-});
+}
 
 // ==================== تحميل البيانات ====================
 async function loadAllData() {
@@ -146,62 +690,80 @@ async function loadAllData() {
 }
 
 async function loadFamilies() {
-    const { data, error } = await supabase.from('families').select('*').order('created_at', { ascending: false });
-    if (error) {
-        showToast('خطأ في تحميل الأسر: ' + error.message, 'error');
-        return;
+    try {
+        const { data, error } = await supabase
+            .from('families')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            console.error('خطأ في تحميل الأسر:', error);
+            showToast('خطأ في تحميل الأسر: ' + error.message, 'error');
+            allFamilies = [];
+            return;
+        }
+        allFamilies = data || [];
+        renderFamilies();
+    } catch (err) {
+        console.error('خطأ:', err);
     }
-    allFamilies = data || [];
-    renderFamiliesTable();
 }
 
 async function loadOrphans() {
-    const { data, error } = await supabase.from('orphans').select('*, families(name)').order('created_at', { ascending: false });
-    if (error) {
-        showToast('خطأ في تحميل الأيتام: ' + error.message, 'error');
-        return;
+    try {
+        const { data, error } = await supabase
+            .from('orphans')
+            .select('*, families(name)')
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            console.error('خطأ في تحميل الأيتام:', error);
+            showToast('خطأ في تحميل الأيتام: ' + error.message, 'error');
+            allOrphans = [];
+            return;
+        }
+        allOrphans = data || [];
+        renderOrphans();
+    } catch (err) {
+        console.error('خطأ:', err);
     }
-    allOrphans = data || [];
-    renderOrphansTable();
 }
 
-function renderFamiliesTable() {
-    const tbody = document.getElementById('familiesTableBody');
+function renderFamilies() {
+    const tbody = document.getElementById('familiesTable');
     if (allFamilies.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">لا توجد أسر</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد أسر مسجلة</td></tr>';
         return;
     }
     tbody.innerHTML = allFamilies.map(f => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="p-3">${f.name}</td>
-            <td class="p-3">${f.members_count || '-'}</td>
-            <td class="p-3">${f.orphans_count || 0}</td>
-            <td class="p-3">${f.economic_status || '-'}</td>
-            <td class="p-3">${f.is_displaced ? 'نازحة' : '-'}</td>
-            <td class="p-3">
-                <button onclick="deleteFamily('${f.id}')" class="text-red-600 hover:text-red-800 text-sm">حذف</button>
+        <tr>
+            <td>${escapeHtml(f.name)}</td>
+            <td>${escapeHtml(f.guardian || '-')}</td>
+            <td>${escapeHtml(f.phone || '-')}</td>
+            <td>${escapeHtml(f.district || '-')}</td>
+            <td>
+                <button class="action-btn btn-delete" onclick="deleteFamily('${f.id}')">حذف</button>
             </td>
         </tr>
     `).join('');
 }
 
-function renderOrphansTable() {
-    const tbody = document.getElementById('orphansTableBody');
+function renderOrphans() {
+    const tbody = document.getElementById('orphansTable');
     if (allOrphans.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-gray-500">لا توجد بيانات</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">لا توجد بيانات أيتام</td></tr>';
         return;
     }
     tbody.innerHTML = allOrphans.map(o => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="p-3">${o.file_number}</td>
-            <td class="p-3">${o.full_name}</td>
-            <td class="p-3">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
-            <td class="p-3">${o.birth_date ? calculateAge(o.birth_date) : '-'}</td>
-            <td class="p-3">${o.families?.name || '-'}</td>
-            <td class="p-3">${o.district || '-'}</td>
-            <td class="p-3">${o.sponsorship_status || '-'}</td>
-            <td class="p-3">
-                <button onclick="deleteOrphan('${o.id}')" class="text-red-600 hover:text-red-800 text-sm">حذف</button>
+        <tr>
+            <td>${escapeHtml(o.file_number || o.orphan_code || '-')}</td>
+            <td>${escapeHtml(o.full_name || o.name || '-')}</td>
+            <td>${o.gender === 'male' ? 'ذكر' : 'أنثى'}</td>
+            <td>${o.birth_date ? calculateAge(o.birth_date) : '-'}</td>
+            <td>${o.families?.name || '-'}</td>
+            <td>${getSponsorshipText(o.sponsorship_status || o.status)}</td>
+            <td>
+                <button class="action-btn btn-delete" onclick="deleteOrphan('${o.id}')">حذف</button>
             </td>
         </tr>
     `).join('');
@@ -215,75 +777,112 @@ function updateStats() {
 }
 
 // ==================== إضافة أسرة ====================
-document.getElementById('addFamilyForm').addEventListener('submit', async (e) => {
+document.getElementById('familyForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = {
-        name: document.getElementById('familyName').value,
-        members_count: parseInt(document.getElementById('familyMembers').value) || 0,
-        economic_status: document.getElementById('familyEconomic').value,
-        is_displaced: document.getElementById('familyDisplaced').value === 'true'
+    
+    const data = {
+        name: document.getElementById('fName').value,
+        guardian: document.getElementById('fGuardian').value,
+        phone: document.getElementById('fPhone').value,
+        district: document.getElementById('fDistrict').value,
+        address: document.getElementById('fAddress').value,
+        income: document.getElementById('fIncome').value,
+        notes: document.getElementById('fNotes').value
     };
-
-    const { error } = await supabase.from('families').insert([formData]);
-    if (error) {
-        showToast('فشل الحفظ: ' + error.message, 'error');
-    } else {
-        showToast('تم إضافة الأسرة بنجاح', 'success');
-        document.getElementById('addFamilyModal').classList.add('hidden');
-        document.getElementById('addFamilyForm').reset();
-        await loadFamilies();
-        updateStats();
+    
+    try {
+        const { error } = await supabase.from('families').insert([data]);
+        
+        if (error) {
+            showToast(' فشل الحفظ: ' + error.message, 'error');
+        } else {
+            showToast('✅ تم إضافة الأسرة بنجاح', 'success');
+            closeModal('familyModal');
+            document.getElementById('familyForm').reset();
+            await loadFamilies();
+            updateStats();
+        }
+    } catch (err) {
+        showToast(' خطأ: ' + err.message, 'error');
     }
 });
 
 // ==================== إضافة يتيم ====================
-document.getElementById('addOrphanForm').addEventListener('submit', async (e) => {
+document.getElementById('orphanForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = {
-        file_number: document.getElementById('orphanFileNumber').value,
-        full_name: document.getElementById('orphanFullName').value,
-        gender: document.getElementById('orphanGender').value,
-        birth_date: document.getElementById('orphanBirthDate').value,
-        district: document.getElementById('orphanDistrict').value,
-        sponsorship_status: document.getElementById('orphanSponsorship').value
+    
+    const data = {
+        file_number: document.getElementById('oFileNumber').value,
+        full_name: document.getElementById('oName').value,
+        gender: document.getElementById('oGender').value,
+        birth_date: document.getElementById('oBirthDate').value,
+        orphan_status: document.getElementById('oStatus').value,
+        sponsorship_status: document.getElementById('oSponsorship').value,
+        district: document.getElementById('oDistrict').value,
+        family_id: document.getElementById('oFamilyId').value || null
     };
-
-    const { error } = await supabase.from('orphans').insert([formData]);
-    if (error) {
-        showToast('فشل الحفظ: ' + error.message, 'error');
-    } else {
-        showToast('تم إضافة اليتيم بنجاح', 'success');
-        document.getElementById('addOrphanModal').classList.add('hidden');
-        document.getElementById('addOrphanForm').reset();
-        await loadOrphans();
-        updateStats();
+    
+    try {
+        const { error } = await supabase.from('orphans').insert([data]);
+        
+        if (error) {
+            showToast('❌ فشل الحفظ: ' + error.message, 'error');
+        } else {
+            showToast('✅ تم إضافة اليتيم بنجاح', 'success');
+            closeModal('orphanModal');
+            document.getElementById('orphanForm').reset();
+            await loadOrphans();
+            updateStats();
+        }
+    } catch (err) {
+        showToast('❌ خطأ: ' + err.message, 'error');
     }
 });
 
 // ==================== الحذف ====================
 window.deleteFamily = async (id) => {
-    if (!confirm('هل أنت متأكد؟')) return;
+    if (!confirm('هل أنت متأكد من حذف هذه الأسرة؟')) return;
     const { error } = await supabase.from('families').delete().eq('id', id);
     if (error) {
-        showToast('فشل الحذف: ' + error.message, 'error');
+        showToast('❌ فشل الحذف: ' + error.message, 'error');
     } else {
-        showToast('تم الحذف', 'success');
+        showToast('✅ تم الحذف', 'success');
         await loadFamilies();
         updateStats();
     }
 };
 
 window.deleteOrphan = async (id) => {
-    if (!confirm('هل أنت متأكد؟')) return;
+    if (!confirm('هل أنت متأكد من حذف هذا اليتيم؟')) return;
     const { error } = await supabase.from('orphans').delete().eq('id', id);
     if (error) {
-        showToast('فشل الحذف: ' + error.message, 'error');
+        showToast('❌ فشل الحذف: ' + error.message, 'error');
     } else {
-        showToast('تم الحذف', 'success');
+        showToast('✅ تم الحذف', 'success');
         await loadOrphans();
         updateStats();
     }
 };
+
+// ==================== التنقل بين الصفحات ====================
+function showPage(page) {
+    document.getElementById('page-dashboard').style.display = 'none';
+    document.getElementById('page-orphans').style.display = 'none';
+    document.getElementById('page-families').style.display = 'none';
+    document.getElementById('page-' + page).style.display = 'block';
+    
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+// ==================== Modal ====================
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
 
 // ==================== دوال مساعدة ====================
 function calculateAge(birthDate) {
@@ -291,262 +890,26 @@ function calculateAge(birthDate) {
     return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) + ' سنة';
 }
 
-function showToast(message, type = 'info') {
+function getSponsorshipText(status) {
+    const map = { 'sponsored': 'مكفول', 'unsponsored': 'غير مكفول', 'needs_sponsor': 'بحاجة إلى كفيل' };
+    return map[status] || status || '-';
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showToast(message, type = 'success') {
     const toast = document.createElement('div');
-    toast.className = `fixed top-4 left-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
+    toast.className = 'toast ' + type;
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
-
-// ==================== التحكم في النوافذ ====================
-window.openFamilyModal = () => document.getElementById('addFamilyModal').classList.remove('hidden');
-window.closeFamilyModal = () => document.getElementById('addFamilyModal').classList.add('hidden');
-window.openOrphanModal = () => document.getElementById('addOrphanModal').classList.remove('hidden');
-window.closeOrphanModal = () => document.getElementById('addOrphanModal').classList.add('hidden');
 </script>
-
-<!-- ==================== واجهة المستخدم ==================== -->
-
-<!-- شاشة تسجيل الدخول / إنشاء حساب -->
-<div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 to-blue-700">
-    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-        <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold text-blue-800 mb-2">قاعدة بيانات أيتام عائلة دلول</h1>
-            <p class="text-gray-600">نظام إدارة بيانات الأيتام والأسر</p>
-        </div>
-        
-        <!-- قسم تسجيل الدخول -->
-        <div id="loginSection">
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
-                    <input type="email" id="loginEmail" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
-                    <input type="password" id="loginPassword" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div id="loginError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-bold">تسجيل الدخول</button>
-            </form>
-            <div class="mt-4 text-center">
-                <p class="text-gray-600 text-sm">ليس لديك حساب؟</p>
-                <button id="showRegisterBtn" class="mt-2 text-blue-600 hover:text-blue-800 font-bold">إنشاء حساب جديد</button>
-            </div>
-        </div>
-
-        <!-- قسم إنشاء حساب جديد -->
-        <div id="registerSection" class="hidden">
-            <form id="registerForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
-                    <input type="email" id="registerEmail" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
-                    <input type="password" id="registerPassword" required minlength="6" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">تأكيد كلمة المرور</label>
-                    <input type="password" id="registerConfirmPassword" required minlength="6" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div id="registerError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
-                <div id="registerSuccess" class="hidden bg-green-50 text-green-600 p-3 rounded-lg text-sm"></div>
-                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-bold">إنشاء الحساب</button>
-            </form>
-            <div class="mt-4 text-center">
-                <button id="showLoginBtn" class="text-blue-600 hover:text-blue-800 font-bold">العودة لتسجيل الدخول</button>
-            </div>
-        </div>
-
-        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p class="text-xs text-gray-600 text-center">🔒 هذا النظام يعمل مع قاعدة بيانات سحابية آمنة.</p>
-        </div>
-    </div>
-</div>
-
-<!-- التطبيق الرئيسي -->
-<div id="mainApp" class="hidden min-h-screen flex flex-col md:flex-row">
-    <aside class="w-full md:w-64 bg-slate-800 text-white p-4">
-        <div class="text-center mb-6 pb-4 border-b border-slate-700">
-            <h2 class="text-2xl font-bold">عائلة دلول</h2>
-            <p class="text-sm text-gray-400">نظام إدارة الأيتام</p>
-        </div>
-        <nav class="space-y-2 mb-8">
-            <a href="#" class="block p-3 bg-blue-600 rounded-lg">🏠 الرئيسية</a>
-            <a href="#orphansSection" class="block p-3 hover:bg-slate-700 rounded-lg">👶 الأيتام</a>
-            <a href="#familiesSection" class="block p-3 hover:bg-slate-700 rounded-lg">👨‍👩‍👧‍👦 الأسر</a>
-        </nav>
-        <div class="mt-auto pt-6 border-t border-slate-700">
-            <div class="mb-4 p-3 bg-slate-700 rounded-lg">
-                <p class="text-sm text-gray-300">المستخدم</p>
-                <p id="userNameDisplay" class="font-bold text-white text-sm break-all">-</p>
-            </div>
-            <button id="logoutBtn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm">خروج</button>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-4 md:p-8 overflow-y-auto bg-gray-100">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-blue-600">
-                <div class="text-4xl font-bold text-blue-600" id="statOrphans">0</div>
-                <div class="text-gray-600 text-sm">إجمالي الأيتام</div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-green-600">
-                <div class="text-4xl font-bold text-green-600" id="statFamilies">0</div>
-                <div class="text-gray-600 text-sm">إجمالي الأسر</div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-indigo-600">
-                <div class="text-4xl font-bold text-indigo-600" id="statMale">0</div>
-                <div class="text-gray-600 text-sm">ذكور</div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-pink-600">
-                <div class="text-4xl font-bold text-pink-600" id="statFemale">0</div>
-                <div class="text-gray-600 text-sm">إناث</div>
-            </div>
-        </div>
-
-        <div id="familiesSection" class="bg-white rounded-xl shadow-lg mb-8">
-            <div class="p-6 border-b flex justify-between items-center">
-                <h3 class="text-xl font-bold">إدارة الأسر</h3>
-                <button onclick="openFamilyModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">+ إضافة أسرة</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-right">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="p-4">الاسم</th>
-                            <th class="p-4">الأفراد</th>
-                            <th class="p-4">الأيتام</th>
-                            <th class="p-4">الاقتصادية</th>
-                            <th class="p-4">النزوح</th>
-                            <th class="p-4">إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="familiesTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="orphansSection" class="bg-white rounded-xl shadow-lg">
-            <div class="p-6 border-b flex justify-between items-center">
-                <h3 class="text-xl font-bold">قائمة الأيتام</h3>
-                <button onclick="openOrphanModal()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 text-sm">+ إضافة يتيم</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-right">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="p-4">رقم الملف</th>
-                            <th class="p-4">الاسم</th>
-                            <th class="p-4">الجنس</th>
-                            <th class="p-4">العمر</th>
-                            <th class="p-4">الأسرة</th>
-                            <th class="p-4">المنطقة</th>
-                            <th class="p-4">الكفالة</th>
-                            <th class="p-4">إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orphansTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-</div>
-
-<!-- نافذة إضافة أسرة -->
-<div id="addFamilyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
-        <div class="p-6 border-b flex justify-between items-center">
-            <h3 class="text-xl font-bold">إضافة أسرة جديدة</h3>
-            <button onclick="closeFamilyModal()" class="text-3xl">&times;</button>
-        </div>
-        <form id="addFamilyForm" class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">اسم الأسرة *</label>
-                    <input type="text" id="familyName" required class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">عدد الأفراد</label>
-                    <input type="number" id="familyMembers" class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">الحالة الاقتصادية</label>
-                    <select id="familyEconomic" class="w-full px-4 py-2 border rounded-lg">
-                        <option value="">اختر</option>
-                        <option value="good">جيدة</option>
-                        <option value="medium">متوسطة</option>
-                        <option value="poor">ضعيفة</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">نازحة؟</label>
-                    <select id="familyDisplaced" class="w-full px-4 py-2 border rounded-lg">
-                        <option value="false">لا</option>
-                        <option value="true">نعم</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeFamilyModal()" class="px-6 py-2 border rounded-lg">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg">حفظ</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- نافذة إضافة يتيم -->
-<div id="addOrphanModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
-        <div class="p-6 border-b flex justify-between items-center">
-            <h3 class="text-xl font-bold">إضافة يتيم جديد</h3>
-            <button onclick="closeOrphanModal()" class="text-3xl">&times;</button>
-        </div>
-        <form id="addOrphanForm" class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">رقم الملف *</label>
-                    <input type="text" id="orphanFileNumber" required class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">الاسم الرباعي *</label>
-                    <input type="text" id="orphanFullName" required class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">الجنس *</label>
-                    <select id="orphanGender" required class="w-full px-4 py-2 border rounded-lg">
-                        <option value="">اختر</option>
-                        <option value="male">ذكر</option>
-                        <option value="female">أنثى</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">تاريخ الميلاد *</label>
-                    <input type="date" id="orphanBirthDate" required class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">المنطقة</label>
-                    <input type="text" id="orphanDistrict" class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">الكفالة *</label>
-                    <select id="orphanSponsorship" required class="w-full px-4 py-2 border rounded-lg">
-                        <option value="">اختر</option>
-                        <option value="sponsored">مكفول</option>
-                        <option value="unsponsored">غير مكفول</option>
-                        <option value="needs_sponsor">بحاجة إلى كفيل</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeOrphanModal()" class="px-6 py-2 border rounded-lg">إلغاء</button>
-                <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg">حفظ</button>
-            </div>
-        </form>
-    </div>
-</div>
 
 </body>
 </html>
