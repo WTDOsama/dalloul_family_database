@@ -33,10 +33,125 @@
             .main-content { margin-right: 0; }
             .app-container { flex-direction: column; }
         }
+        /* new style for side bar*/
+        /* القائمة الجانبية على الجوال */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        right: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1000;
+        transition: right 0.3s ease;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    }
+    
+    .sidebar.active {
+        right: 0;
+    }
+    
+    .main-content {
+        margin-right: 0 !important;
+        padding: 15px !important;
+    }
+    
+    .menu-toggle {
+        display: block !important;
+    }
+    
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+    
+    .overlay.active {
+        display: block;
+    }
+}
+
+/* زر القائمة */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+    background: #1e40af;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.menu-toggle:hover {
+    background: #1e3a8a;
+}
+
+/* تحسين الجداول على الجوال */
+@media (max-width: 768px) {
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 4px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+    
+    .stat-card {
+        padding: 15px !important;
+    }
+    
+    .stat-card .number {
+        font-size: 28px !important;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .page-header h1 {
+        font-size: 22px;
+    }
+    
+    .filters-bar {
+        flex-direction: column;
+    }
+    
+    .filters-bar input,
+    .filters-bar select,
+    .filters-bar button {
+        width: 100%;
+    }
+}
+   /* end new style */     
     </style>
 </head>
 <body>
+<!-- New Button add -->
+    <!-- زر القائمة للجوال -->
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
+<!-- Overlay للجوال -->
+<div class="overlay" onclick="toggleSidebar()"></div>
+<!-- End Button add -->
 <!-- شاشة تسجيل الدخول -->
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 to-purple-800">
     <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
@@ -1800,6 +1915,35 @@ function showToast(message, type = 'success') {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
+    /*New Javscript files */
+    // التحكم في القائمة الجانبية على الجوال
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.overlay');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+// إغلاق القائمة عند النقر على أي رابط (على الجوال)
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            toggleSidebar();
+        }
+    });
+});
+
+// إغلاق القائمة عند تغيير حجم الشاشة
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+});
+    /*End New Javscripts*/
 </script>
 
 </body>
