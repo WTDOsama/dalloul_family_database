@@ -404,7 +404,7 @@
             <p class="username" id="userNameDisplay">admin</p>
             <span class="role-badge" id="userRoleDisplay">مدير</span>
         </div>
-        <button id="logoutBtn" onclick="handleLogout(event)">خروج</button>
+        <button id="logoutBtn">خروج</button>
     </div>
 </aside>
 
@@ -2067,9 +2067,10 @@ function showToast(message, type = 'success') {
 }
     /*New Javscript files */
     // ========================================
-// التحكم في القائمة الجانبية - Responsive
+// التحكم في القائمة الجانبية - الحل النهائي
 // ========================================
 
+// فتح/إغلاق القائمة
 function toggleSidebar(event) {
     if (event) {
         event.preventDefault();
@@ -2079,102 +2080,92 @@ function toggleSidebar(event) {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.overlay');
     
-    if (!sidebar || !overlay) return;
+    if (sidebar) sidebar.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('active');
     
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
-    
-    // منع التمرير في الخلفية عند فتح القائمة
-    if (sidebar.classList.contains('active')) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = '';
-    }
+    // منع التمرير في الخلفية
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
 }
 
-// إغلاق القائمة عند الضغط على روابط التنقل (وليس زر الخروج)
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-        // إذا كان العنصر هو زر الخروج، لا تفعل شيئاً هنا
-        if (this.id === 'logoutBtn' || this.closest('#logoutBtn')) {
-            return;
-        }
-        
-        // على الموبايل، أغلق القائمة بعد 150ms
-        if (window.innerWidth <= 768) {
-            setTimeout(() => {
-                toggleSidebar();
-            }, 150);
-        }
-    });
-});
-
-// معالجة زر الخروج بشكل منفصل
-function handleLogout(event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    // أغلق القائمة أولاً
+// إغلاق القائمة فقط (بدون تسجيل خروج)
+function closeSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.overlay');
     
     if (sidebar) sidebar.classList.remove('active');
     if (overlay) overlay.classList.remove('active');
     document.body.style.overflow = '';
+}
+
+// تسجيل الخروج - الدالة الرئيسية
+async function doLogout() {
+    // أغلق القائمة أولاً
+    closeSidebar();
     
-    // نفذ تسجيل الخروج
-    if (typeof doLogout === 'function') {
-        doLogout();
-    } else {
-        // إذا لم توجد دالة doLogout، نفذ الكود مباشرة
-        sb.auth.signOut().then(() => {
-            window.location.reload();
-        });
+    // سجّل الخروج من Supabase
+    try {
+        if (typeof sb !== 'undefined' && sb.auth) {
+            await sb.auth.signOut();
+        }
+        currentUser = null;
+        
+        // أظهر شاشة تسجيل الدخول
+        const loginScreen = document.getElementById('loginScreen');
+        const mainApp = document.getElementById('mainApp');
+        
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (mainApp) mainApp.style.display = 'none';
+        
+        // امسح بيانات الحقول
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) loginForm.reset();
+        
+    } catch (err) {
+        console.error('خطأ في تسجيل الخروج:', err);
+        showToast('فشل تسجيل الخروج', 'error');
     }
 }
 
-// تأكد من أن زر الخروج متصل بشكل صحيح
+// ربط زر الخروج بالدالة الصحيحة
 document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn && !logoutBtn.onclick) {
-        logoutBtn.onclick = handleLogout;
-    }
-});
-
-// إغلاق القائمة عند تغيير حجم الشاشة
-window.addEventListener('resize', function() {
-    if (window.innerWidth > 768) {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.querySelector('.overlay');
+    if (logoutBtn) {
+        // احذف أي event listeners سابقة
+        logoutBtn.onclick = null;
         
-        if (sidebar) sidebar.classList.remove('active');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-});
-
-// إغلاق القائمة عند الضغط على Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.querySelector('.overlay');
-        
-        if (sidebar && sidebar.classList.contains('active')) {
-            toggleSidebar();
-        }
-    }
-});
-
-// منع إغلاق القائمة عند النقر داخلها
-document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) {
-        sidebar.addEventListener('click', function(e) {
+        // أضف الدالة الجديدة
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
+            doLogout();
         });
     }
+    
+    // إغلاق القائمة عند الضغط على روابط التنقل
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                setTimeout(() => closeSidebar(), 150);
+            }
+        });
+    });
+    
+    // إغلاق القائمة عند تغيير حجم الشاشة
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+        }
+    });
+    
+    // إغلاق القائمة بزر Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        }
+    });
 });
     /*End New Javscripts*/
 </script>
