@@ -33,49 +33,102 @@
             .main-content { margin-right: 0; }
             .app-container { flex-direction: column; }
         }
-        /* new style for side bar*/
-        /* القائمة الجانبية على الجوال */
-@media (max-width: 768px) {
-    .sidebar {
-        position: fixed;
-        right: -280px;
-        width: 280px;
-        height: 100vh;
-        z-index: 1000;
-        transition: right 0.3s ease;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
-    }
-    
-    .sidebar.active {
-        right: 0;
-    }
-    
-    .main-content {
-        margin-right: 0 !important;
-        padding: 15px !important;
-    }
-    
-    .menu-toggle {
-        display: block !important;
-    }
-    
-    .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 999;
-    }
-    
-    .overlay.active {
-        display: block;
-    }
+    /* Start New style for side bar*/
+        /* ========================================
+   القائمة الجانبية - Responsive كامل
+   ======================================== */
+
+/* القائمة على الديسكتوب */
+.sidebar {
+    width: 260px;
+    background: #1e293b;
+    color: white;
+    position: fixed;
+    height: 100vh;
+    right: 0;
+    top: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-/* زر القائمة */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #334155;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.nav-item:hover, .nav-item.active {
+    background: #334155;
+    color: white;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #334155;
+    background: #0f172a;
+    margin-top: auto;
+}
+
+.user-info {
+    margin-bottom: 10px;
+}
+
+.user-info p {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.user-info .username {
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #3b82f6;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+#logoutBtn {
+    width: 100%;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+#logoutBtn:hover {
+    background: #dc2626;
+}
+
+/* زر القائمة للموبايل */
 .menu-toggle {
     display: none;
     position: fixed;
@@ -90,24 +143,96 @@
     height: 45px;
     font-size: 24px;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    align-items: center;
+    justify-content: center;
 }
 
 .menu-toggle:hover {
     background: #1e3a8a;
 }
 
-/* تحسين الجداول على الجوال */
+/* Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* المحتوى الرئيسي */
+.main-content {
+    margin-right: 260px;
+    padding: 30px;
+    transition: margin-right 0.3s ease;
+}
+
+/* ========================================
+   Responsive للموبايل (أقل من 768px)
+   ======================================== */
 @media (max-width: 768px) {
-    .data-table {
-        font-size: 12px;
+    .menu-toggle {
+        display: flex !important;
     }
     
-    .data-table th,
-    .data-table td {
-        padding: 8px 4px;
+    .sidebar {
+        position: fixed;
+        right: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1000;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
     }
     
+    .sidebar.active {
+        right: 0;
+    }
+    
+    .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .sidebar-footer {
+        margin-top: auto;
+        padding: 15px 20px;
+        background: #0f172a;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+    }
+    
+    #logoutBtn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .main-content {
+        margin-right: 0 !important;
+        padding: 15px !important;
+        padding-top: 70px !important;
+    }
+    
+    .nav-item {
+        padding: 15px 20px;
+    }
+    
+    /* تحسين عرض المحتوى على الموبايل */
     .stats-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
@@ -127,10 +252,6 @@
         align-items: stretch;
     }
     
-    .page-header h1 {
-        font-size: 22px;
-    }
-    
     .filters-bar {
         flex-direction: column;
     }
@@ -140,22 +261,26 @@
     .filters-bar button {
         width: 100%;
     }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    table th,
+    table td {
+        padding: 8px 4px;
+    }
 }
-        /* إصلاح زر الخروج على الموبايل */
-@media (max-width: 768px) {
+
+/* للموبايل الصغير جداً */
+@media (max-width: 480px) {
     .sidebar {
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        right: -100%;
     }
     
-    .sidebar-footer {
-        margin-top: auto !important;
-        padding-bottom: 20px !important;
-    }
-    
-    #logoutBtn {
-        margin-top: 10px !important;
-        display: block !important;
+    .stats-grid {
+        grid-template-columns: 1fr !important;
     }
 }
    /* end new style */     
@@ -163,11 +288,7 @@
 </head>
 <body>
 <!-- New Button add -->
-    <!-- زر القائمة للجوال -->
-<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
-<!-- Overlay للجوال -->
-<div class="overlay" onclick="toggleSidebar()"></div>
 <!-- End Button add -->
 <!-- شاشة تسجيل الدخول -->
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 to-purple-800">
@@ -229,53 +350,65 @@
 
 <!-- التطبيق الرئيسي -->
 <div id="mainApp" class="hidden min-h-screen flex app-container">
+<!-- New Side Bar -->
     <!-- القائمة الجانبية -->
-    <aside class="sidebar w-64 bg-slate-800 text-white fixed h-full overflow-y-auto z-40">
-        <div class="p-4 border-b border-slate-700">
-            <h2 class="text-xl font-bold mb-1">عائلة دلول</h2>
-            <p class="text-xs text-gray-400">نظام إدارة بيانات الأيتام والأسر</p>
+    <!-- زر القائمة للموبايل -->
+<button class="menu-toggle" onclick="toggleSidebar(event)">☰</button>
+
+<!-- Overlay -->
+<div class="overlay" onclick="toggleSidebar(event)"></div>
+
+<!-- القائمة الجانبية -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>عائلة دلول</h2>
+        <p>نظام إدارة بيانات الأيتام والأسر</p>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+            <span>🏠</span><span>الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" data-page="orphans">
+            <span></span><span>الأيتام</span>
+        </a>
+        <a href="#" class="nav-item" data-page="families">
+            <span>👨‍👩‍👧‍👦</span><span>الأسر</span>
+        </a>
+        <a href="#" class="nav-item" data-page="assistance">
+            <span></span><span>المساعدات</span>
+        </a>
+        <a href="#" class="nav-item" data-page="followups">
+            <span>📋</span><span>المتابعة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="reports">
+            <span>📊</span><span>التقارير</span>
+        </a>
+        <a href="#" class="nav-item" data-page="stats">
+            <span>📈</span><span>الإحصاءات</span>
+        </a>
+        <a href="#" class="nav-item" data-page="logs">
+            <span>📜</span><span>سجل النشاط</span>
+        </a>
+        <a href="#" class="nav-item" data-page="backup">
+            <span>💾</span><span>النسخ الاحتياطي</span>
+        </a>
+        <a href="#" class="nav-item" data-page="settings">
+            <span>⚙️</span><span>إعدادات المدير</span>
+        </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <p>المستخدم</p>
+            <p class="username" id="userNameDisplay">admin</p>
+            <span class="role-badge" id="userRoleDisplay">مدير</span>
         </div>
-        <nav class="p-4 space-y-1">
-            <a href="#" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="dashboard">
-                <span></span><span>الرئيسية</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="orphans">
-                <span>👶</span><span>الأيتام</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="families">
-                <span>👨‍👩‍👧‍👦</span><span>الأسر</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="assistance">
-                <span>🤝</span><span>المساعدات</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="followups">
-                <span>📋</span><span>المتابعة</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="reports">
-                <span>📊</span><span>التقارير</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="stats">
-                <span>📈</span><span>الإحصاءات</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="logs">
-                <span>📜</span><span>سجل النشاط</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="backup">
-                <span>💾</span><span>النسخ الاحتياطي</span>
-            </a>
-            <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700" data-page="settings">
-                <span>⚙️</span><span>إعدادات المدير</span>
-            </a>
-        </nav>
-        <div class="p-4 border-t border-slate-700">
-            <div class="mb-3">
-                <p class="text-xs text-gray-400">المستخدم</p>
-                <p id="userNameDisplay" class="font-bold text-white text-sm break-all">-</p>
-                <span id="userRoleDisplay" class="text-xs bg-blue-600 px-2 py-1 rounded">مدير</span>
-            </div>
-            <button onclick="doLogout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm">خروج</button>
-        </div>
-    </aside>
+        <button id="logoutBtn" onclick="handleLogout(event)">خروج</button>
+    </div>
+</aside>
+
+<!-- End New Side Bar -->
 
     <!-- المحتوى الرئيسي -->
     <main class="main-content flex-1 mr-64 p-8 overflow-y-auto">
@@ -1933,31 +2066,114 @@ function showToast(message, type = 'success') {
     setTimeout(() => toast.remove(), 3000);
 }
     /*New Javscript files */
-    // التحكم في القائمة الجانبية على الجوال
-function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
+    // ========================================
+// التحكم في القائمة الجانبية - Responsive
+// ========================================
+
+function toggleSidebar(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.overlay');
+    
+    if (!sidebar || !overlay) return;
     
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
+    
+    // منع التمرير في الخلفية عند فتح القائمة
+    if (sidebar.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
 }
 
-// إغلاق القائمة عند النقر على أي رابط (على الجوال)
+// إغلاق القائمة عند الضغط على روابط التنقل (وليس زر الخروج)
 document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('click', function(e) {
+        // إذا كان العنصر هو زر الخروج، لا تفعل شيئاً هنا
+        if (this.id === 'logoutBtn' || this.closest('#logoutBtn')) {
+            return;
+        }
+        
+        // على الموبايل، أغلق القائمة بعد 150ms
         if (window.innerWidth <= 768) {
-            toggleSidebar();
+            setTimeout(() => {
+                toggleSidebar();
+            }, 150);
         }
     });
 });
 
+// معالجة زر الخروج بشكل منفصل
+function handleLogout(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    // أغلق القائمة أولاً
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.overlay');
+    
+    if (sidebar) sidebar.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // نفذ تسجيل الخروج
+    if (typeof doLogout === 'function') {
+        doLogout();
+    } else {
+        // إذا لم توجد دالة doLogout، نفذ الكود مباشرة
+        sb.auth.signOut().then(() => {
+            window.location.reload();
+        });
+    }
+}
+
+// تأكد من أن زر الخروج متصل بشكل صحيح
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn && !logoutBtn.onclick) {
+        logoutBtn.onclick = handleLogout;
+    }
+});
+
 // إغلاق القائمة عند تغيير حجم الشاشة
-window.addEventListener('resize', () => {
+window.addEventListener('resize', function() {
     if (window.innerWidth > 768) {
-        const sidebar = document.querySelector('.sidebar');
+        const sidebar = document.getElementById('sidebar');
         const overlay = document.querySelector('.overlay');
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
+        
+        if (sidebar) sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
+// إغلاق القائمة عند الضغط على Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.overlay');
+        
+        if (sidebar && sidebar.classList.contains('active')) {
+            toggleSidebar();
+        }
+    }
+});
+
+// منع إغلاق القائمة عند النقر داخلها
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
     }
 });
     /*End New Javscripts*/
