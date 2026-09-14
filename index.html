@@ -141,6 +141,23 @@
         width: 100%;
     }
 }
+        /* إصلاح زر الخروج على الموبايل */
+@media (max-width: 768px) {
+    .sidebar {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .sidebar-footer {
+        margin-top: auto !important;
+        padding-bottom: 20px !important;
+    }
+    
+    #logoutBtn {
+        margin-top: 10px !important;
+        display: block !important;
+    }
+}
    /* end new style */     
     </style>
 </head>
