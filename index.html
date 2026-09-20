@@ -9,13 +9,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-        * { font-family: 'Tajawal', sans-serif; }
+        * { font-family: 'Cairo', sans-serif; }
         body { background: #f1f5f9; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
@@ -527,12 +525,6 @@ h1 {
     text-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
 }
 
-/* الأيقونات */
-.nav-item i, .nav-item span:first-child {
-    font-size: 20px !important;
-    margin-left: 10px !important;
-}
-
 /* تأثيرات الظهور */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -656,159 +648,10 @@ h1 {
     padding: 12px 24px !important;
     font-size: 14px !important;
 }    
-/* ========================================
-   استبدال الإيموجي بأيقونات Font Awesome الحديثة
-   ======================================== */
-
-/* إخفاء الإيموجي القديمة */
-.nav-item span:first-child,
-aside a span:first-child,
-[class*="nav-item"] > span:first-child {
-    display: none !important;
-}
-
-/* إضافة أيقونات Font Awesome */
-/* الرئيسية */
-.nav-item[data-page="dashboard"]::before,
-a[data-page="dashboard"]::before {
-    content: '\f015' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 900 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* الأيتام */
-.nav-item[data-page="orphans"]::before,
-a[data-page="orphans"]::before {
-    content: '\f1ae' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* الأسر */
-.nav-item[data-page="families"]::before,
-a[data-page="families"]::before {
-    content: '\f0c0' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* المساعدات */
-.nav-item[data-page="assistance"]::before,
-a[data-page="assistance"]::before {
-    content: '\f4b5' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* المتابعة */
-.nav-item[data-page="followups"]::before,
-a[data-page="followups"]::before {
-    content: '\f0ea' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* التقارير */
-.nav-item[data-page="reports"]::before,
-a[data-page="reports"]::before {
-    content: '\f15c' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* الإحصاءات */
-.nav-item[data-page="stats"]::before,
-a[data-page="stats"]::before {
-    content: '\f201' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* سجل النشاط */
-.nav-item[data-page="logs"]::before,
-a[data-page="logs"]::before {
-    content: '\f1da' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* النسخ الاحتياطي */
-.nav-item[data-page="backup"]::before,
-a[data-page="backup"]::before {
-    content: '\f0c7' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* إعدادات المدير */
-.nav-item[data-page="settings"]::before,
-a[data-page="settings"]::before {
-    content: '\f013' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
-    font-size: 20px !important;
-    margin-left: 10px !important;
-    display: inline-block !important;
-}
-
-/* أيقونات البطاقات الإحصائية */
-.stat-card::before {
-    display: none !important;
-}
-
-/* أيقونات الجدول */
-table tbody tr td:last-child button:first-child::before {
-    content: '\f029' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 900 !important;
-    margin-left: 5px !important;
-}
-
-table tbody tr td:last-child button:last-child::before {
-    content: '\f1f8' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 900 !important;
-    margin-left: 5px !important;
-}
-
-/* إخفاء النص داخل الأزرار إذا وجد */
-table tbody tr td:last-child button span {
-    display: none !important;
-}
         
 </style>
 </head>
 <body>
-<!-- New Button add -->
-
-<!-- End Button add -->
 <!-- شاشة تسجيل الدخول -->
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 to-purple-800">
     <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
@@ -869,65 +712,63 @@ table tbody tr td:last-child button span {
 
 <!-- التطبيق الرئيسي -->
 <div id="mainApp" class="hidden min-h-screen flex app-container">
-<!-- New Side Bar -->
-    <!-- القائمة الجانبية -->
     <!-- زر القائمة للموبايل -->
-<button class="menu-toggle" onclick="toggleSidebar(event)">☰</button>
+    <button class="menu-toggle" onclick="toggleSidebar(event)">
+        <i class="fas fa-bars"></i>
+    </button>
 
-<!-- Overlay -->
-<div class="overlay" onclick="toggleSidebar(event)"></div>
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar(event)"></div>
 
-<!-- القائمة الجانبية -->
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <h2>عائلة دلول</h2>
-        <p>نظام إدارة بيانات الأيتام والأسر</p>
-    </div>
-    
-    <nav class="sidebar-nav">
-        <a href="#" class="nav-item active" data-page="dashboard">
-            <span>🏠</span><span>الرئيسية</span>
-        </a>
-        <a href="#" class="nav-item" data-page="orphans">
-            <span></span><span>الأيتام</span>
-        </a>
-        <a href="#" class="nav-item" data-page="families">
-            <span>👨‍👩‍👧‍👦</span><span>الأسر</span>
-        </a>
-        <a href="#" class="nav-item" data-page="assistance">
-            <span></span><span>المساعدات</span>
-        </a>
-        <a href="#" class="nav-item" data-page="followups">
-            <span>📋</span><span>المتابعة</span>
-        </a>
-        <a href="#" class="nav-item" data-page="reports">
-            <span>📊</span><span>التقارير</span>
-        </a>
-        <a href="#" class="nav-item" data-page="stats">
-            <span>📈</span><span>الإحصاءات</span>
-        </a>
-        <a href="#" class="nav-item" data-page="logs">
-            <span>📜</span><span>سجل النشاط</span>
-        </a>
-        <a href="#" class="nav-item" data-page="backup">
-            <span>💾</span><span>النسخ الاحتياطي</span>
-        </a>
-        <a href="#" class="nav-item" data-page="settings">
-            <span>⚙️</span><span>إعدادات المدير</span>
-        </a>
-    </nav>
-    
-    <div class="sidebar-footer">
-        <div class="user-info">
-            <p>المستخدم</p>
-            <p class="username" id="userNameDisplay">admin</p>
-            <span class="role-badge" id="userRoleDisplay">مدير</span>
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>عائلة دلول</h2>
+            <p>نظام إدارة بيانات الأيتام والأسر</p>
         </div>
-        <button id="logoutBtn">خروج</button>
-    </div>
-</aside>
-
-<!-- End New Side Bar -->
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home"></i><span>الرئيسية</span>
+            </a>
+            <a href="#" class="nav-item" data-page="orphans">
+                <i class="far fa-child"></i><span>الأيتام</span>
+            </a>
+            <a href="#" class="nav-item" data-page="families">
+                <i class="fas fa-users"></i><span>الأسر</span>
+            </a>
+            <a href="#" class="nav-item" data-page="assistance">
+                <i class="far fa-hand-holding-heart"></i><span>المساعدات</span>
+            </a>
+            <a href="#" class="nav-item" data-page="followups">
+                <i class="far fa-clipboard"></i><span>المتابعة</span>
+            </a>
+            <a href="#" class="nav-item" data-page="reports">
+                <i class="far fa-file-alt"></i><span>التقارير</span>
+            </a>
+            <a href="#" class="nav-item" data-page="stats">
+                <i class="fas fa-chart-line"></i><span>الإحصاءات</span>
+            </a>
+            <a href="#" class="nav-item" data-page="logs">
+                <i class="fas fa-history"></i><span>سجل النشاط</span>
+            </a>
+            <a href="#" class="nav-item" data-page="backup">
+                <i class="fas fa-save"></i><span>النسخ الاحتياطي</span>
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i><span>إعدادات المدير</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <p>المستخدم</p>
+                <p class="username" id="userNameDisplay">admin</p>
+                <span class="role-badge" id="userRoleDisplay">مدير</span>
+            </div>
+            <button id="logoutBtn">خروج</button>
+        </div>
+    </aside>
 
     <!-- المحتوى الرئيسي -->
     <main class="main-content flex-1 mr-64 p-8 overflow-y-auto">
@@ -945,7 +786,7 @@ table tbody tr td:last-child button span {
                             <p class="text-gray-600 text-sm mb-1">إجمالي الأيتام</p>
                             <p id="statTotalOrphans" class="text-4xl font-bold text-blue-600">0</p>
                         </div>
-                        <span class="text-5xl"></span>
+                        <i class="fas fa-child text-5xl text-blue-600 opacity-20"></i>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-green-600">
@@ -954,7 +795,7 @@ table tbody tr td:last-child button span {
                             <p class="text-gray-600 text-sm mb-1">إجمالي الأسر</p>
                             <p id="statTotalFamilies" class="text-4xl font-bold text-green-600">0</p>
                         </div>
-                        <span class="text-5xl">👨👩‍👧‍</span>
+                        <i class="fas fa-users text-5xl text-green-600 opacity-20"></i>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-purple-600">
@@ -963,7 +804,7 @@ table tbody tr td:last-child button span {
                             <p class="text-gray-600 text-sm mb-1">ذكور</p>
                             <p id="statMaleOrphans" class="text-4xl font-bold text-purple-600">0</p>
                         </div>
-                        <span class="text-5xl">👦</span>
+                        <i class="fas fa-male text-5xl text-purple-600 opacity-20"></i>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-lg border-r-4 border-pink-600">
@@ -972,7 +813,7 @@ table tbody tr td:last-child button span {
                             <p class="text-gray-600 text-sm mb-1">إناث</p>
                             <p id="statFemaleOrphans" class="text-4xl font-bold text-pink-600">0</p>
                         </div>
-                        <span class="text-5xl">👧</span>
+                        <i class="fas fa-female text-5xl text-pink-600 opacity-20"></i>
                     </div>
                 </div>
             </div>
@@ -1153,19 +994,19 @@ table tbody tr td:last-child button span {
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button onclick="exportOrphanReport()" class="p-6 border-2 border-blue-600 rounded-xl hover:bg-blue-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2"> تقرير يتيم كامل (PDF)</h3>
+                        <h3 class="font-bold text-lg mb-2"><i class="fas fa-file-pdf ml-2"></i>تقرير يتيم كامل (PDF)</h3>
                         <p class="text-gray-600">تصدير تقرير PDF مفصل عن يتيم محدد</p>
                     </button>
                     <button onclick="exportFamilyReport()" class="p-6 border-2 border-green-600 rounded-xl hover:bg-green-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2">👨‍👩‍👧‍👦 تقرير الأسرة (PDF)</h3>
+                        <h3 class="font-bold text-lg mb-2"><i class="fas fa-file-pdf ml-2"></i>تقرير الأسرة (PDF)</h3>
                         <p class="text-gray-600">تصدير تقرير PDF عن أسرة محددة</p>
                     </button>
                     <button onclick="exportAllOrphansCSV()" class="p-6 border-2 border-purple-600 rounded-xl hover:bg-purple-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2">📋 تقرير جميع الأيتام (CSV/Excel)</h3>
+                        <h3 class="font-bold text-lg mb-2"><i class="fas fa-file-csv ml-2"></i>تقرير جميع الأيتام (CSV/Excel)</h3>
                         <p class="text-gray-600">تصدير CSV لجميع الأيتام</p>
                     </button>
                     <button onclick="exportAssistanceCSV()" class="p-6 border-2 border-orange-600 rounded-xl hover:bg-orange-50 transition text-right">
-                        <h3 class="font-bold text-lg mb-2">🤝 تقرير المساعدات (CSV)</h3>
+                        <h3 class="font-bold text-lg mb-2"><i class="fas fa-file-csv ml-2"></i>تقرير المساعدات (CSV)</h3>
                         <p class="text-gray-600">تصدير CSV لجميع المساعدات</p>
                     </button>
                 </div>
@@ -1210,14 +1051,14 @@ table tbody tr td:last-child button span {
             </div>
             <div class="bg-white rounded-xl shadow-lg p-6 space-y-6">
                 <div class="p-4 bg-blue-50 rounded-lg">
-                    <p class="text-sm text-blue-800">💡 البيانات محفوظة في قاعدة بيانات PostgreSQL آمنة عبر الإنترنت (Supabase).</p>
+                    <p class="text-sm text-blue-800"><i class="fas fa-info-circle ml-1"></i>البيانات محفوظة في قاعدة بيانات PostgreSQL آمنة عبر الإنترنت (Supabase).</p>
                 </div>
                 <div>
-                    <h3 class="font-bold text-lg mb-3"> تصدير بيانات التطبيق</h3>
+                    <h3 class="font-bold text-lg mb-3">تصدير بيانات التطبيق</h3>
                     <button onclick="exportBackup()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">تصدير جميع البيانات (JSON)</button>
                 </div>
                 <div>
-                    <h3 class="font-bold text-lg mb-3">📤 استيراد نسخة احتياطية</h3>
+                    <h3 class="font-bold text-lg mb-3"><i class="fas fa-upload ml-1"></i>استيراد نسخة احتياطية</h3>
                     <input type="file" id="importBackupFile" accept=".json" class="hidden" onchange="importBackup(event)">
                     <button onclick="document.getElementById('importBackupFile').click()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">استيراد من ملف JSON</button>
                 </div>
@@ -1492,7 +1333,7 @@ table tbody tr td:last-child button span {
 <script>
 // ==================== إعدادات Supabase ====================
 const SUPABASE_URL = 'https://tqdqoszgsrrbuhdtzlet.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T'; // ⚠️ ضع مفتاحك هنا
+const SUPABASE_ANON_KEY = 'sb_publishable_WNiUsjHqQntAUyOwMaoYdA_XDiFD55T';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -1618,9 +1459,26 @@ async function handleRegister(e) {
 }
 
 async function doLogout() {
-    await sb.auth.signOut();
-    currentUser = null;
-    showLoginScreen();
+    closeSidebar();
+    try {
+        if (typeof sb !== 'undefined' && sb.auth) {
+            await sb.auth.signOut();
+        }
+        currentUser = null;
+        
+        const loginScreen = document.getElementById('loginScreen');
+        const mainApp = document.getElementById('mainApp');
+        
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (mainApp) mainApp.style.display = 'none';
+        
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) loginForm.reset();
+        
+    } catch (err) {
+        console.error('خطأ في تسجيل الخروج:', err);
+        showToast('فشل تسجيل الخروج', 'error');
+    }
 }
 
 function showRegister() {
@@ -1691,8 +1549,8 @@ function renderOrphans(filtered = null) {
             <td class="px-4 py-3">${escapeHtml(o.district || '-')}</td>
             <td class="px-4 py-3">${getSponsorshipText(o.sponsorship_status)}</td>
             <td class="px-4 py-3">
-                <button onclick="viewQR('${o.id}')" class="text-blue-600 hover:text-blue-800 ml-2">📱</button>
-                <button onclick="deleteOrphan('${o.id}')" class="text-red-600 hover:text-red-800">حذف</button>
+                <button onclick="viewQR('${o.id}')" class="text-blue-600 hover:text-blue-800 ml-2"><i class="fas fa-qrcode"></i></button>
+                <button onclick="deleteOrphan('${o.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
     `).join('');
@@ -1720,7 +1578,7 @@ function renderFamilies(filtered = null) {
             <td class="px-4 py-3">${getIncomeText(f.income || f.economic_status)}</td>
             <td class="px-4 py-3">${f.is_displaced ? 'نازحة' : 'غير نازحة'}</td>
             <td class="px-4 py-3">
-                <button onclick="deleteFamily('${f.id}')" class="text-red-600 hover:text-red-800">حذف</button>
+                <button onclick="deleteFamily('${f.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
         `;
@@ -1749,7 +1607,7 @@ function renderAssistance() {
             <td class="px-4 py-3">${a.amount || '-'}</td>
             <td class="px-4 py-3">${escapeHtml(a.notes || '-')}</td>
             <td class="px-4 py-3">
-                <button onclick="deleteAssistance('${a.id}')" class="text-red-600 hover:text-red-800">حذف</button>
+                <button onclick="deleteAssistance('${a.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
         `;
@@ -1773,7 +1631,7 @@ function renderFollowups() {
             <td class="px-4 py-3">${escapeHtml(f.notes || '-')}</td>
             <td class="px-4 py-3">${formatDate(f.next_date)}</td>
             <td class="px-4 py-3">
-                <button onclick="deleteFollowup('${f.id}')" class="text-red-600 hover:text-red-red-800">حذف</button>
+                <button onclick="deleteFollowup('${f.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
         `;
@@ -1895,7 +1753,6 @@ function renderStats() {
 async function handleOrphanSubmit(e) {
     e.preventDefault();
     
-    // جمع الاحتياجات
     const needs = [];
     document.querySelectorAll('#orphanForm .checkbox-grid input:checked').forEach(cb => needs.push(cb.value));
     
@@ -1936,7 +1793,6 @@ async function handleOrphanSubmit(e) {
     };
     
     try {
-        // إنشاء الأسرة إذا لم تكن موجودة
         if (data.family_name) {
             const { data: existingFamily } = await sb.from('families').select('id').eq('name', data.family_name).single();
             if (!existingFamily) {
@@ -1963,7 +1819,7 @@ async function handleOrphanSubmit(e) {
         resetOrphanForm();
         await loadAllData();
     } catch (err) {
-        showToast('❌ فشل الحفظ: ' + err.message, 'error');
+        showToast(' فشل الحفظ: ' + err.message, 'error');
     }
 }
 
@@ -2082,7 +1938,7 @@ async function deleteAssistance(id) {
 async function deleteFollowup(id) {
     if (!confirm('هل أنت متأكد؟')) return;
     const { error } = await sb.from('followups').delete().eq('id', id);
-    if (error) { showToast(' فشل: ' + error.message, 'error'); return; }
+    if (error) { showToast('فشل: ' + error.message, 'error'); return; }
     showToast('✅ تم الحذف', 'success');
     await loadFollowups();
 }
@@ -2393,7 +2249,6 @@ async function exportOrphanReport() {
         return;
     }
     
-    // عرض نافذة اختيار اليتيم
     selectOrphanCallback = (orphanId) => {
         const orphan = allData.orphans.find(o => o.id === orphanId);
         if (!orphan) return;
@@ -2584,12 +2439,11 @@ function showToast(message, type = 'success') {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
-    /*New Javscript files */
-    // ========================================
-// التحكم في القائمة الجانبية - الحل النهائي
+
+// ========================================
+// التحكم في القائمة الجانبية
 // ========================================
 
-// فتح/إغلاق القائمة
 function toggleSidebar(event) {
     if (event) {
         event.preventDefault();
@@ -2602,11 +2456,9 @@ function toggleSidebar(event) {
     if (sidebar) sidebar.classList.toggle('active');
     if (overlay) overlay.classList.toggle('active');
     
-    // منع التمرير في الخلفية
     document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
 }
 
-// إغلاق القائمة فقط (بدون تسجيل خروج)
 function closeSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.overlay');
@@ -2616,43 +2468,12 @@ function closeSidebar() {
     document.body.style.overflow = '';
 }
 
-// تسجيل الخروج - الدالة الرئيسية
-async function doLogout() {
-    // أغلق القائمة أولاً
-    closeSidebar();
-    
-    // سجّل الخروج من Supabase
-    try {
-        if (typeof sb !== 'undefined' && sb.auth) {
-            await sb.auth.signOut();
-        }
-        currentUser = null;
-        
-        // أظهر شاشة تسجيل الدخول
-        const loginScreen = document.getElementById('loginScreen');
-        const mainApp = document.getElementById('mainApp');
-        
-        if (loginScreen) loginScreen.style.display = 'flex';
-        if (mainApp) mainApp.style.display = 'none';
-        
-        // امسح بيانات الحقول
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) loginForm.reset();
-        
-    } catch (err) {
-        console.error('خطأ في تسجيل الخروج:', err);
-        showToast('فشل تسجيل الخروج', 'error');
-    }
-}
-
 // ربط زر الخروج بالدالة الصحيحة
 document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        // احذف أي event listeners سابقة
         logoutBtn.onclick = null;
         
-        // أضف الدالة الجديدة
         logoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -2660,7 +2481,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // إغلاق القائمة عند الضغط على روابط التنقل
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function(e) {
             if (window.innerWidth <= 768) {
@@ -2669,14 +2489,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // إغلاق القائمة عند تغيير حجم الشاشة
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
             closeSidebar();
         }
     });
     
-    // إغلاق القائمة بزر Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const sidebar = document.getElementById('sidebar');
@@ -2686,7 +2504,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-    /*End New Javscripts*/
 </script>
 
 </body>
