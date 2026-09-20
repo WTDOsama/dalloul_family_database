@@ -571,7 +571,92 @@ h1 {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
     font-weight: 600 !important;
 }
-    </style>
+ /* ========================================
+   إصلاح المودال - حجم مناسب مع زر حفظ ظاهر
+   ======================================== */
+
+/* المودال نفسه */
+.modal, [id*="Modal"] {
+    padding: 20px !important;
+    overflow-y: auto !important;
+}
+
+/* محتوى المودال */
+.modal-content, [id*="Modal"] > div {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    margin: 20px auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* جسم المودال (المحتوى الداخلي) */
+.modal-body, [id*="Modal"] form > div:first-child {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    max-height: calc(90vh - 150px) !important;
+    padding: 20px !important;
+}
+
+/* تذييل المودال (زر الحفظ) */
+.modal-footer, [id*="Modal"] form > div:last-child {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: white !important;
+    padding: 20px !important;
+    border-top: 2px solid #e5e7eb !important;
+    z-index: 10 !important;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* على الموبايل */
+@media (max-width: 768px) {
+    .modal, [id*="Modal"] {
+        padding: 10px !important;
+    }
+    
+    .modal-content, [id*="Modal"] > div {
+        max-height: 95vh !important;
+        margin: 10px auto !important;
+        border-radius: 16px !important;
+    }
+    
+    .modal-body, [id*="Modal"] form > div:first-child {
+        max-height: calc(95vh - 120px) !important;
+        padding: 15px !important;
+    }
+    
+    .modal-footer, [id*="Modal"] form > div:last-child {
+        padding: 15px !important;
+    }
+}
+
+/* خطوات المودال (المتعددة) */
+.step, [data-step] {
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    padding: 10px !important;
+}
+
+/* شبكة النماذج */
+.grid, [class*="grid-cols"] {
+    gap: 15px !important;
+}
+
+/* حقول الإدخال في المودال */
+.modal input, .modal select, .modal textarea,
+[id*="Modal"] input, [id*="Modal"] select, [id*="Modal"] textarea {
+    font-size: 14px !important;
+    padding: 10px !important;
+}
+
+/* أزرار المودال */
+.modal button, [id*="Modal"] button {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+}       
+</style>
 </head>
 <body>
 <!-- New Button add -->
