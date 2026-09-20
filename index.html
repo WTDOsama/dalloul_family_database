@@ -10,9 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
         * { font-family: 'Tajawal', sans-serif; }
@@ -657,150 +657,212 @@ h1 {
     font-size: 14px !important;
 }    
 /* ========================================
-   استبدال الإيموجي بأيقونات Font Awesome الحديثة
+   إصلاح الأيقونات - Font Awesome 6
    ======================================== */
 
 /* إخفاء الإيموجي القديمة */
-.nav-item span:first-child,
-aside a span:first-child,
-[class*="nav-item"] > span:first-child {
+.nav-item > span:first-child,
+aside .nav-item span:first-child {
     display: none !important;
 }
 
-/* إضافة أيقونات Font Awesome */
+/* إخفاء الإيموجي في بطاقات الإحصائيات */
+.stat-card .text-5xl,
+.stat-card > div > span.text-5xl {
+    display: none !important;
+}
+
+/* إضافة أيقونات Font Awesome - القائمة الجانبية */
 /* الرئيسية */
-.nav-item[data-page="dashboard"]::before,
-a[data-page="dashboard"]::before {
+.nav-item[data-page="dashboard"]::after,
+a[data-page="dashboard"]::after {
     content: '\f015' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 900 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* الأيتام */
-.nav-item[data-page="orphans"]::before,
-a[data-page="orphans"]::before {
+.nav-item[data-page="orphans"]::after,
+a[data-page="orphans"]::after {
     content: '\f1ae' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 400 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* الأسر */
-.nav-item[data-page="families"]::before,
-a[data-page="families"]::before {
+.nav-item[data-page="families"]::after,
+a[data-page="families"]::after {
     content: '\f0c0' !important;
     font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
+    font-weight: 900 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* المساعدات */
-.nav-item[data-page="assistance"]::before,
-a[data-page="assistance"]::before {
+.nav-item[data-page="assistance"]::after,
+a[data-page="assistance"]::after {
     content: '\f4b5' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 400 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* المتابعة */
-.nav-item[data-page="followups"]::before,
-a[data-page="followups"]::before {
+.nav-item[data-page="followups"]::after,
+a[data-page="followups"]::after {
     content: '\f0ea' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 400 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* التقارير */
-.nav-item[data-page="reports"]::before,
-a[data-page="reports"]::before {
+.nav-item[data-page="reports"]::after,
+a[data-page="reports"]::after {
     content: '\f15c' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 400 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* الإحصاءات */
-.nav-item[data-page="stats"]::before,
-a[data-page="stats"]::before {
+.nav-item[data-page="stats"]::after,
+a[data-page="stats"]::after {
     content: '\f201' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 400 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* سجل النشاط */
-.nav-item[data-page="logs"]::before,
-a[data-page="logs"]::before {
+.nav-item[data-page="logs"]::after,
+a[data-page="logs"]::after {
     content: '\f1da' !important;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 400 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* النسخ الاحتياطي */
-.nav-item[data-page="backup"]::before,
-a[data-page="backup"]::before {
+.nav-item[data-page="backup"]::after,
+a[data-page="backup"]::after {
     content: '\f0c7' !important;
     font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
+    font-weight: 900 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
 /* إعدادات المدير */
-.nav-item[data-page="settings"]::before,
-a[data-page="settings"]::before {
+.nav-item[data-page="settings"]::after,
+a[data-page="settings"]::after {
     content: '\f013' !important;
     font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 400 !important;
+    font-weight: 900 !important;
     font-size: 20px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    color: white !important;
     display: inline-block !important;
 }
 
-/* أيقونات البطاقات الإحصائية */
-.stat-card::before {
+/* ========================================
+   أيقونات بطاقات الإحصائيات
+   ======================================== */
+
+/* إخفاء الإيموجي القديمة في البطاقات */
+.stat-card .text-5xl {
     display: none !important;
 }
 
-/* أيقونات الجدول */
-table tbody tr td:last-child button:first-child::before {
-    content: '\f029' !important;
-    font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 900 !important;
-    margin-left: 5px !important;
+/* إضافة أيقونات جديدة للبطاقات */
+/* إجمالي الأيتام */
+#statTotalOrphans {
+    position: relative;
 }
 
-table tbody tr td:last-child button:last-child::before {
-    content: '\f1f8' !important;
+#statTotalOrphans::before {
+    content: '\f1ae' !important;
     font-family: 'Font Awesome 6 Free' !important;
-    font-weight: 900 !important;
-    margin-left: 5px !important;
+    font-weight: 400 !important;
+    font-size: 48px !important;
+    color: #3b82f6 !important;
+    position: absolute !important;
+    left: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
 }
 
-/* إخفاء النص داخل الأزرار إذا وجد */
-table tbody tr td:last-child button span {
-    display: none !important;
+/* إجمالي الأسر */
+#statTotalFamilies::before {
+    content: '\f0c0' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+    font-size: 48px !important;
+    color: #10b981 !important;
+    position: absolute !important;
+    left: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* ذكور */
+#statMaleOrphans::before {
+    content: '\f222' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+    font-size: 48px !important;
+    color: #8b5cf6 !important;
+    position: absolute !important;
+    left: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* إناث */
+#statFemaleOrphans::before {
+    content: '\f221' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+    font-size: 48px !important;
+    color: #ec4899 !important;
+    position: absolute !important;
+    left: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* جعل البطاقات relative للأيقونات */
+.stat-card {
+    position: relative !important;
+    padding-left: 90px !important;
 }
         
 </style>
