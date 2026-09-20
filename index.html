@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
         * { font-family: 'Cairo', sans-serif !important; }
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; min-height: 100vh; }
         
@@ -80,9 +81,9 @@
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        /* تنسيق الأيقونات داخل القائمة */
+        /* تنسيق الأيقونات داخل القائمة (الحل الجذري) */
         .nav-item i {
-            font-size: 18px !important;
+            font-size: 20px !important;
             width: 24px !important;
             text-align: center !important;
             display: inline-block !important;
@@ -1174,7 +1175,7 @@ function renderOrphans(filtered = null) {
         <tr class="border-b hover:bg-gray-50">
             <td class="px-4 py-3 font-semibold">${escapeHtml(o.orphan_code || o.file_number || '-')}</td>
             <td class="px-4 py-3">${escapeHtml(o.name || o.full_name || '-')}</td>
-            <td class="px-4 py-3"><span class="badge ${o.gender === 'male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</span></td>
+            <td class="px-4 py-3"><span class="badge ${o.gender === 'male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}" style="border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 600;">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</span></td>
             <td class="px-4 py-3">${o.birth_date ? calculateAgeFromDate(o.birth_date) : '-'}</td>
             <td class="px-4 py-3">${getOrphanStatusText(o.orphan_status)}</td>
             <td class="px-4 py-3">${escapeHtml(o.district || '-')}</td>
@@ -1300,7 +1301,7 @@ function renderRecentOrphans() {
         <tr class="border-b hover:bg-gray-50">
             <td class="px-4 py-3 font-semibold">${escapeHtml(o.orphan_code || o.file_number || '-')}</td>
             <td class="px-4 py-3">${escapeHtml(o.name || o.full_name || '-')}</td>
-            <td class="px-4 py-3"><span class="badge ${o.gender === 'male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</span></td>
+            <td class="px-4 py-3"><span class="badge ${o.gender === 'male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}" style="border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 600;">${o.gender === 'male' ? 'ذكر' : 'أنثى'}</span></td>
             <td class="px-4 py-3">${o.birth_date ? calculateAgeFromDate(o.birth_date) : '-'}</td>
             <td class="px-4 py-3">${formatDate(o.created_at)}</td>
         </tr>
