@@ -655,7 +655,154 @@ h1 {
 .modal button, [id*="Modal"] button {
     padding: 12px 24px !important;
     font-size: 14px !important;
-}       
+}    
+/* ========================================
+   استبدال الإيموجي بأيقونات Font Awesome الحديثة
+   ======================================== */
+
+/* إخفاء الإيموجي القديمة */
+.nav-item span:first-child,
+aside a span:first-child,
+[class*="nav-item"] > span:first-child {
+    display: none !important;
+}
+
+/* إضافة أيقونات Font Awesome */
+/* الرئيسية */
+.nav-item[data-page="dashboard"]::before,
+a[data-page="dashboard"]::before {
+    content: '\f015' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* الأيتام */
+.nav-item[data-page="orphans"]::before,
+a[data-page="orphans"]::before {
+    content: '\f1ae' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* الأسر */
+.nav-item[data-page="families"]::before,
+a[data-page="families"]::before {
+    content: '\f0c0' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* المساعدات */
+.nav-item[data-page="assistance"]::before,
+a[data-page="assistance"]::before {
+    content: '\f4b5' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* المتابعة */
+.nav-item[data-page="followups"]::before,
+a[data-page="followups"]::before {
+    content: '\f0ea' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* التقارير */
+.nav-item[data-page="reports"]::before,
+a[data-page="reports"]::before {
+    content: '\f15c' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* الإحصاءات */
+.nav-item[data-page="stats"]::before,
+a[data-page="stats"]::before {
+    content: '\f201' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* سجل النشاط */
+.nav-item[data-page="logs"]::before,
+a[data-page="logs"]::before {
+    content: '\f1da' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* النسخ الاحتياطي */
+.nav-item[data-page="backup"]::before,
+a[data-page="backup"]::before {
+    content: '\f0c7' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* إعدادات المدير */
+.nav-item[data-page="settings"]::before,
+a[data-page="settings"]::before {
+    content: '\f013' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin-left: 10px !important;
+    display: inline-block !important;
+}
+
+/* أيقونات البطاقات الإحصائية */
+.stat-card::before {
+    display: none !important;
+}
+
+/* أيقونات الجدول */
+table tbody tr td:last-child button:first-child::before {
+    content: '\f029' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+    margin-left: 5px !important;
+}
+
+table tbody tr td:last-child button:last-child::before {
+    content: '\f1f8' !important;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+    margin-left: 5px !important;
+}
+
+/* إخفاء النص داخل الأزرار إذا وجد */
+table tbody tr td:last-child button span {
+    display: none !important;
+}
+        
 </style>
 </head>
 <body>
